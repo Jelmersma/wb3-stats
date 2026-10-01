@@ -1,0 +1,143 @@
+/*
+ * Alle teksten van de site staan hier. Pas de tone of voice alleen in dit bestand aan.
+ * {naam} wordt ingevuld door de site. Een functie mag ook, bv. voor enkelvoud/meervoud.
+ */
+window.WB3_COPY = {
+  site: {
+    team: "WB3",
+    logoSub: "Stats",
+    title: "WB3 Stats",
+    updated: "Bijgewerkt op {date}",
+    season: "Seizoen {season}",
+    footer: "Alle cijfers komen uit de grote WB3-Excel.",
+    skip: "Naar de inhoud",
+  },
+
+  nav: {
+    label: "Hoofdmenu",
+    home: "Overzicht",
+    players: "Spelers",
+    matches: "Wedstrijden",
+    training: "Training",
+  },
+
+  soort: { comp: "Competitie", oefen: "Oefen", all: "Alles" },
+  result: { W: "Winst", G: "Gelijk", V: "Verlies" },
+  short: { W: "W", G: "G", V: "V" },
+
+  home: {
+    eyebrow: "Seizoen {season} · Competitie",
+    title: "Zo staan we ervoor",
+    points: "Punten",
+    played: "Gespeeld",
+    record: "W–G–V",
+    goals: "Doelpunten",
+    goalDiff: "Doelsaldo",
+    form: "Vorm",
+    noForm: "Nog geen competitieduels gespeeld.",
+    last: "Laatste wedstrijd",
+    noLast: "Er is nog niks gespeeld. De spanning stijgt.",
+    next: "Volgende wedstrijd",
+    noNext: "Geen wedstrijden meer op het programma.",
+    after: "Daarna",
+    allMatches: "Alle wedstrijden",
+    boards: "Klassementen",
+    boardsSub: "Competitie, tot nu toe",
+    allPlayers: "Alle spelers",
+  },
+
+  boards: {
+    goals: "Topscorers",
+    assists: "Assists",
+    snuiter: "Vaakst Snuiter",
+    minutes: "Meeste minuten",
+    training: "Trainingsopkomst",
+    trainingSub: "Hele seizoen",
+    cards: "Kaartenboekje",
+    cardsSub: "Competitie + oefen",
+    empty: "Nog niemand.",
+    more: ({ n }) => (n === 1 ? "en nog 1 speler" : `en nog ${n} spelers`),
+  },
+
+  stats: {
+    player: "Speler",
+    apps: "Wed.",
+    appsLong: "Wedstrijden",
+    min: "Min.",
+    minLong: "Minuten",
+    goals: "Goals",
+    assists: "Assists",
+    snuiter: "Snuiter",
+    geel: "Geel",
+    rood: "Rood",
+    training: "Training",
+    total: "Totaal",
+  },
+
+  match: {
+    home: "Thuis",
+    away: "Uit",
+    vs: "vs",
+    goals: "Doelpunten",
+    assists: "Assists",
+    snuiter: "Snuiter",
+    geel: "Geel",
+    rood: "Rood",
+    ownGoal: "Eigen goal",
+    lineup: ({ n }) => `Opstelling & minuten (${n})`,
+    noLineup: "Geen minuten bekend.",
+    today: "Vandaag!",
+    tomorrow: "Morgen",
+    inDays: ({ n }) => `Over ${n} dagen`,
+    pending: "Uitslag volgt",
+    next: "Volgende",
+    against: ({ score, opp }) => `${score} tegen ${opp}`,
+  },
+
+  players: {
+    title: "Spelers",
+    intro: "Tik op een kolom om te sorteren en op een naam voor het hele verhaal.",
+  },
+
+  player: {
+    eyebrow: "Speler",
+    notFound: "Deze speler kennen we niet.",
+    back: "Terug naar alle spelers",
+    summary: ({ apps, min }) =>
+      `${apps} ${apps === 1 ? "competitieduel" : "competitieduels"} · ${min} minuten`,
+    tileOefen: ({ v }) => `Oefen: ${v}`,
+    trainingPct: "Training",
+    trainingOf: ({ att, held }) => `${att} van ${held}`,
+    matches: "Wedstrijden",
+    didNotPlay: "Niet gespeeld",
+    noMatches: "Nog geen wedstrijden gespeeld.",
+    training: "Trainingen",
+    streak: ({ n }) => (n > 1 ? `${n} op rij aanwezig` : n === 1 ? "Laatste training aanwezig" : "Laatste training gemist"),
+  },
+
+  matches: {
+    title: "Wedstrijden",
+    intro: "Uitslagen, doelpuntenmakers en wat er verder gebeurde.",
+    results: "Uitslagen",
+    fixtures: "Programma",
+    noResults: "Nog geen uitslagen.",
+    noFixtures: "Niks meer gepland.",
+  },
+
+  training: {
+    title: "Training",
+    intro: "Wie er was, en wie er (weer) niet was.",
+    sessions: "Trainingen",
+    avg: "Gem. opkomst",
+    avgSub: "spelers per training",
+    best: "Drukste training",
+    perSession: "Opkomst per training",
+    perSessionSub: "Aantal spelers aanwezig",
+    grid: "Wie was er?",
+    gridSub: "Gesorteerd op opkomst",
+    present: "aanwezig",
+    absent: "afwezig",
+    players: ({ n }) => (n === 1 ? "1 speler" : `${n} spelers`),
+    none: "Nog geen trainingen.",
+  },
+};
