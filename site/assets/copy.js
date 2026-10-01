@@ -10,7 +10,8 @@ window.WB3_COPY = {
     title: "WB3 Stats",
     updated: "Bijgewerkt op {date}",
     season: "Seizoen {season}",
-    footer: "Alle cijfers komen uit de Excel. Klachten over je minuten? Meld je bij de technische staf.",
+    footer:
+      "Klachten over je statistieken? Ga eerst bij jezelf te rade. Grote kans dat het is opgelost. Nog steeds een probleem? Meld je bij de technische staf. Gaat waarschijnlijk niks opleveren.",
     skip: "Naar de inhoud",
   },
 
@@ -62,13 +63,13 @@ window.WB3_COPY = {
     assists: "Assists",
     assistsSub: "Op een presenteerblaadje",
     snuiter: "Snuiter van de week",
-    snuiterSub: "Vaakst op het kratje",
+    snuiterSub: "Man of the match. Hoger dan dit wordt het niet.",
     minutes: "Meeste minuten",
     minutesSub: "De kilometervreters",
     training: "Trainingsopkomst",
-    trainingSub: "Wie niet traint, voelt dat op zondag",
+    trainingSub: "Donderdag op het veld. Of weer een goed argument.",
     cards: "Kaartenboekje",
-    cardsSub: "Strijd. Inzet. Soms een gele.",
+    cardsSub: "Strijd. Inzet. Beetje zeiken. Soms een gele.",
     empty: "Nog niemand. Kans!",
     more: ({ n }) => (n === 1 ? "en nog 1 strijder" : `en nog ${n} strijders`),
   },
@@ -159,7 +160,7 @@ window.WB3_COPY = {
 
   training: {
     title: "Training",
-    intro: "Wie niet traint, voelt dat op zondag. En maandag. En eigenlijk de hele week.",
+    intro: "Elke donderdag ligt het veld er klaar. Een deel van de selectie ook. De rest had weer een goed argument.",
     sessions: "Trainingen",
     avg: "Gem. opkomst",
     avgSub: "strijders per training",

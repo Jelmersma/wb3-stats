@@ -13,7 +13,7 @@ We schrijven over een derde elftal van rond de veertig alsof het Real Madrid is.
 2. **Droog en kort.** Korte zinnen. Feit, feit, steek. Een grap heeft geen uitroepteken nodig. *"Op papier een tegenstander waar we voor de volle buit moeten gaan."*
 3. **Zelfspot over leeftijd en fitheid.** Een lichaam van 38 met het hoofd van een 22-jarige. De A1 zijn "de jochies" of "de pubers".
 4. **Plagen met liefde.** Iedereen krijgt een rol: de kilometervreter, de duizendpoot, de keeper met z'n uittrappen. Maar het eindigt altijd warm: *"Maar we houden wel van ze 🫶"*, *"Hulde"*, *"Stuk voor stuk onmisbaar."*
-5. **Rituelen zijn heilig.** Snuiter van de week (met een Foresthill op het kratje), bierbeurt, kleedkamersessie, derde helft, weekendje weg, "Voor in de agenda", "Tot morgen 😘".
+5. **Rituelen zijn heilig.** Snuiter van de week (de man of the match, beloond met een Foresthill), bierbeurt, kleedkamersessie, derde helft, weekendje weg, "Voor in de agenda", "Tot morgen 😘".
 6. **Voetbalcultuur als referentiekader.** Een vergelijking met Oranje, de Eredivisie of bekende trainers (Advocaat, Overmars, Guardiola) mag. Hooguit één per stuk.
 
 ## Vaste vormen
@@ -25,7 +25,7 @@ We schrijven over een derde elftal van rond de veertig alsof het Real Madrid is.
 
 ## Woordenlijst
 
-potje / pot · heerlijk potje · oefenpot · competitiepot · zakelijke 2-0 · de volle buit · finales · matchday · strijders · gladiatoren · legends · galacticos · teampie · Komaan · Hulde · volgas · *Pak je verantwoordelijkheid* · *We hebben nog helemaal niks* · *Geen man overboord* · *Op papier…* · *We oordelen niet, we signaleren alleen* · *Kleedkamerverhalen blijven in de kleedkamer* · Voor in de agenda · Snuiter (van de week / van het jaar) · kratje · bierbeurt · derde helft
+potje / pot · heerlijk potje · oefenpot · competitiepot · zakelijke 2-0 · de volle buit · finales · matchday · strijders · gladiatoren · legends · galacticos · teampie · Komaan · Hulde · volgas · *Pak je verantwoordelijkheid* · *We hebben nog helemaal niks* · *Geen man overboord* · *Op papier…* · *We oordelen niet, we signaleren alleen* · *Kleedkamerverhalen blijven in de kleedkamer* · Voor in de agenda · Snuiter van de week (= man of the match) / van het jaar · kratje · bierbeurt · derde helft
 
 ## Grenzen: de site is openbaar
 
@@ -53,7 +53,10 @@ De teamapp is binnenskamers, de site staat voor iedereen open. Daarom gelden dez
 | Ongeslagen | Ongeslagen. Lekker. Maar we hebben nog helemaal niks. |
 | Training gemist | Laatste training gemist. We oordelen niet, we signaleren alleen. |
 | Leeg klassement | Nog niemand. Kans! |
-| Footer | Klachten over je minuten? Meld je bij de technische staf. |
+| Snuiter-klassement | Man of the match. Hoger dan dit wordt het niet. |
+| Training (sneer naar wie er niet is) | Elke donderdag ligt het veld er klaar. Een deel van de selectie ook. De rest had weer een goed argument. |
+| Kaarten | Strijd. Inzet. Beetje zeiken. Soms een gele. |
+| Footer | Klachten over je statistieken? Ga eerst bij jezelf te rade. … Meld je bij de technische staf. Gaat waarschijnlijk niks opleveren. |
 
 ## Design
 

@@ -1426,13 +1426,11 @@ table.presence {
   gap: 6px 16px;
 }
 .footer-note {
+  flex-basis: 100%;
+  max-width: 72ch;
+  margin-top: 6px;
   color: var(--on-brand-2);
   opacity: 0.85;
-}
-@media (min-width: 720px) {
-  .footer-note {
-    margin-left: auto;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
