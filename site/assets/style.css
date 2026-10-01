@@ -1441,8 +1441,18 @@ table.presence {
 .footer-inner {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   gap: 6px 16px;
+}
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: center;
+}
+.crest.crest-sm {
+  width: 36px;
+  height: 36px;
 }
 .footer-note {
   flex-basis: 100%;

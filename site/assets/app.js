@@ -207,7 +207,7 @@
     </div>`;
     const updated = D.generated.slice(0, 10);
     document.getElementById("foot").innerHTML = `<div class="wrap footer-inner">
-      <span class="logo-mark sm">${team()}</span>
+      <span class="footer-brand"><img class="crest crest-sm" src="assets/clublogo.png" alt="" width="36" height="36"><span class="logo-mark sm">${team()}</span></span>
       <span>${te("site.season", { season: D.season })} · ${te("site.updated", { date: fmt(updated, { day: "numeric", month: "long", year: "numeric" }) })}</span>
       <span class="footer-note">${te("site.footer")}</span>
     </div>`;
