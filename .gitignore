@@ -2,3 +2,13 @@
 __pycache__/
 *.pyc
 data/~$*.xlsx
+
+# Bronmateriaal (privé, niet publiceren)
+IMG_*.png
+IMG_*.PNG
+IMG_*.jpg
+IMG_*.jpeg
+IMG_*.HEIC
+*.zip
+_chat.txt
+bronnen/

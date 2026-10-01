@@ -46,4 +46,11 @@ Felix uploadt in de chat een nieuwe versie van de Excel en vraagt om een update.
 
 ## Tekst en tone of voice
 
-Alle zichtbare tekst staat in `site/assets/copy.js`. Pas de tone of voice daar toe. Voeg in `app.js` geen losse strings toe: maak een sleutel in `copy.js` en gebruik `t("pad.naar.sleutel")`.
+Alle zichtbare tekst staat in `site/assets/copy.js`. Voeg in `app.js` geen losse strings toe: maak een sleutel in `copy.js` en gebruik `t("pad.naar.sleutel")`.
+
+Volg [TONE_OF_VOICE.md](TONE_OF_VOICE.md) voor toon, woordkeuze, design en vooral de **grenzen**. De site is openbaar: geen grappen over partners, exen, gezondheid, politiek of privézaken, ook niet als ze in de teamapp wel voorkomen.
+
+## Privé bronmateriaal
+
+- Screenshots (`IMG_*.png`) en WhatsApp-exports horen nooit in de repo. Ze staan in `.gitignore`.
+- Controleer vóór elke commit met `git status` dat er geen foto's of chatbestanden meegaan.

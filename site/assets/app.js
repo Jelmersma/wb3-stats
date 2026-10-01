@@ -59,7 +59,7 @@
     assists:
       '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 11.5c3-5 6.5-6.5 10-6.5M9.5 2.5l3 2.5-2.5 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     snuiter:
-      '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8l1.85 3.9 4.25.55-3.1 2.95.8 4.2L8 11.35 4.2 13.4l.8-4.2L1.9 6.25l4.25-.55z" fill="currentColor"/></svg>',
+      '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.6 1h2.8v2.6c0 .9 1.6 1.7 1.6 3.6V14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.2c0-1.9 1.6-2.7 1.6-3.6z" fill="currentColor"/><rect x="5.9" y="8.2" width="4.2" height="3.4" rx=".5" fill="var(--surface)" opacity=".85"/></svg>',
     geel: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="1.5" width="8" height="13" rx="1.6" fill="#f2c200"/></svg>',
     rood: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="1.5" width="8" height="13" rx="1.6" fill="#d63a3a"/></svg>',
   };
@@ -112,7 +112,9 @@
   }
 
   function notes(m) {
-    return m.notes ? `<blockquote class="notes">${esc(m.notes)}</blockquote>` : "";
+    return m.notes
+      ? `<figure class="notes"><figcaption>${te("match.notes")}</figcaption><blockquote>${esc(m.notes)}</blockquote></figure>`
+      : "";
   }
 
   function lineup(m) {
@@ -233,6 +235,7 @@
       big: true,
       eyebrow: te("home.eyebrow", { season: D.season }),
       title: te("home.title"),
+      sub: te("home.titleSub", tc),
       extra: `<div class="hero-grid">
         <div class="hero-fig"><span class="hero-num">${tc.points}</span><span class="hero-lbl">${te("home.points")}</span></div>
         <dl class="hero-stats">
@@ -251,6 +254,7 @@
       ? `<article class="card match-card">
           <header class="card-head"><h2 class="h-card">${te("home.last")}</h2>${resBadge(last)}</header>
           ${meta(last)}
+          <p class="verdict">${te("match.verdict", last)}</p>
           ${scoreline(last)}
           ${events(last)}
           ${notes(last)}
@@ -275,16 +279,16 @@
                   .join("")}</ul></div>`
               : ""
           }
-          <a class="link-more" href="wedstrijden.html#programma">${te("matches.fixtures")} →</a>
+          <a class="link-more" href="wedstrijden.html#programma">${te("home.allFixtures")} →</a>
         </article>`
       : `<article class="card match-card"><header class="card-head"><h2 class="h-card">${te("home.next")}</h2></header><p class="empty">${te("home.noNext")}</p></article>`;
 
     const ps = D.players;
     const boards = [
-      board({ title: t("boards.goals"), data: ranked(ps, (p) => p.comp.goals, { tie: (p) => p.comp.assists }), value: (r) => r.v }),
-      board({ title: t("boards.assists"), data: ranked(ps, (p) => p.comp.assists, { tie: (p) => p.comp.goals }), value: (r) => r.v }),
-      board({ title: t("boards.snuiter"), data: ranked(ps, (p) => p.comp.snuiter), value: (r) => r.v }),
-      board({ title: t("boards.minutes"), data: ranked(ps, (p) => p.comp.min), value: (r) => `${r.v}'` }),
+      board({ title: t("boards.goals"), sub: t("boards.goalsSub"), data: ranked(ps, (p) => p.comp.goals, { tie: (p) => p.comp.assists }), value: (r) => r.v }),
+      board({ title: t("boards.assists"), sub: t("boards.assistsSub"), data: ranked(ps, (p) => p.comp.assists, { tie: (p) => p.comp.goals }), value: (r) => r.v }),
+      board({ title: t("boards.snuiter"), sub: t("boards.snuiterSub"), data: ranked(ps, (p) => p.comp.snuiter), value: (r) => r.v }),
+      board({ title: t("boards.minutes"), sub: t("boards.minutesSub"), data: ranked(ps, (p) => p.comp.min), value: (r) => `${r.v}'` }),
       board({
         title: t("boards.training"),
         sub: t("boards.trainingSub"),
@@ -514,6 +518,7 @@
             .map(
               (m) => `<article class="card match-card" id="${esc(m.id)}">
                 ${meta(m, resBadge(m))}
+                <p class="verdict sm">${te("match.verdict", m)}</p>
                 ${scoreline(m, "sm")}
                 ${events(m)}
                 ${notes(m)}

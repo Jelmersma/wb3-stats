@@ -1,6 +1,7 @@
 /*
- * Alle teksten van de site staan hier. Pas de tone of voice alleen in dit bestand aan.
- * {naam} wordt ingevuld door de site. Een functie mag ook, bv. voor enkelvoud/meervoud.
+ * Alle teksten van de site staan hier, in de WB3-tone of voice (zie TONE_OF_VOICE.md).
+ * {naam} wordt ingevuld door de site. Een functie mag ook, bv. voor enkelvoud/meervoud
+ * of een tekst die afhangt van de uitslag.
  */
 window.WB3_COPY = {
   site: {
@@ -9,54 +10,67 @@ window.WB3_COPY = {
     title: "WB3 Stats",
     updated: "Bijgewerkt op {date}",
     season: "Seizoen {season}",
-    footer: "Alle cijfers komen uit de grote WB3-Excel.",
+    footer: "Alle cijfers komen uit de Excel. Klachten over je minuten? Meld je bij de technische staf.",
     skip: "Naar de inhoud",
   },
 
   nav: {
     label: "Hoofdmenu",
     home: "Overzicht",
-    players: "Spelers",
+    players: "Selectie",
     matches: "Wedstrijden",
     training: "Training",
   },
 
-  soort: { comp: "Competitie", oefen: "Oefen", all: "Alles" },
+  soort: { comp: "Competitie", oefen: "Oefenpot", all: "Alles" },
   result: { W: "Winst", G: "Gelijk", V: "Verlies" },
   short: { W: "W", G: "G", V: "V" },
 
   home: {
-    eyebrow: "Seizoen {season} · Competitie",
+    eyebrow: "WB3 🟨⬛ Seizoen {season} · Competitie",
     title: "Zo staan we ervoor",
+    titleSub: ({ played, v, w }) =>
+      played === 0
+        ? "Nog niks gespeeld. Op papier zijn we ongeslagen."
+        : v === 0 && w > 0
+          ? "Ongeslagen. Lekker. Maar we hebben nog helemaal niks."
+          : v === 0
+            ? "Nog niet verloren. Ze moeten er wel een keer in."
+            : "Geen man overboord. Elke pot is vanaf nu een finale.",
     points: "Punten",
     played: "Gespeeld",
     record: "W–G–V",
     goals: "Doelpunten",
     goalDiff: "Doelsaldo",
     form: "Vorm",
-    noForm: "Nog geen competitieduels gespeeld.",
-    last: "Laatste wedstrijd",
-    noLast: "Er is nog niks gespeeld. De spanning stijgt.",
-    next: "Volgende wedstrijd",
-    noNext: "Geen wedstrijden meer op het programma.",
-    after: "Daarna",
-    allMatches: "Alle wedstrijden",
+    noForm: "Nog geen competitiepot gespeeld.",
+    last: "Laatste potje",
+    noLast: "Nog niks gespeeld. De spanning stijgt.",
+    next: "Matchday",
+    noNext: "Geen potjes meer op het programma. Tijd voor het weekendje weg 🎣",
+    after: "Voor in de agenda",
+    allMatches: "Alle uitslagen",
+    allFixtures: "Het hele programma",
     boards: "Klassementen",
-    boardsSub: "Competitie, tot nu toe",
-    allPlayers: "Alle spelers",
+    boardsSub: "Competitie, tot nu toe. Gewoon voor de transparantie.",
+    allPlayers: "De hele selectie",
   },
 
   boards: {
     goals: "Topscorers",
+    goalsSub: "Wie het netje weet te vinden",
     assists: "Assists",
-    snuiter: "Vaakst Snuiter",
+    assistsSub: "Op een presenteerblaadje",
+    snuiter: "Snuiter van de week",
+    snuiterSub: "Vaakst op het kratje",
     minutes: "Meeste minuten",
+    minutesSub: "De kilometervreters",
     training: "Trainingsopkomst",
-    trainingSub: "Hele seizoen",
+    trainingSub: "Wie niet traint, voelt dat op zondag",
     cards: "Kaartenboekje",
-    cardsSub: "Competitie + oefen",
-    empty: "Nog niemand.",
-    more: ({ n }) => (n === 1 ? "en nog 1 speler" : `en nog ${n} spelers`),
+    cardsSub: "Strijd. Inzet. Soms een gele.",
+    empty: "Nog niemand. Kans!",
+    more: ({ n }) => (n === 1 ? "en nog 1 strijder" : `en nog ${n} strijders`),
   },
 
   stats: {
@@ -84,27 +98,41 @@ window.WB3_COPY = {
     geel: "Geel",
     rood: "Rood",
     ownGoal: "Eigen goal",
-    lineup: ({ n }) => `Opstelling & minuten (${n})`,
+    notes: "Uit de kleedkamer",
+    lineup: ({ n }) => `Wie stonden er (${n})`,
     noLineup: "Geen minuten bekend.",
-    today: "Vandaag!",
-    tomorrow: "Morgen",
+    today: "Matchday! 🟨⬛",
+    tomorrow: "Morgen al. Rustig aan vanavond.",
     inDays: ({ n }) => `Over ${n} dagen`,
     pending: "Uitslag volgt",
     next: "Volgende",
     against: ({ score, opp }) => `${score} tegen ${opp}`,
+    // Korte kop boven de uitslag, zoals op de posters in het kanaal
+    verdict: ({ result, ours, theirs }) => {
+      const diff = ours - theirs;
+      if (result === "W" && diff >= 4) return "Dominant.";
+      if (result === "W" && diff === 1) return "Zakelijk. Drie punten.";
+      if (result === "W") return "Heerlijk potje.";
+      if (result === "G" && ours === 0) return "Brilstand. Niemand blij.";
+      if (result === "G") return "Kansen genoeg. Ze moeten er wel in.";
+      if (diff <= -3) return "Daar blijven we niet in hangen.";
+      return "Geen man overboord.";
+    },
   },
 
   players: {
-    title: "Spelers",
-    intro: "Tik op een kolom om te sorteren en op een naam voor het hele verhaal.",
+    title: "De selectie",
+    intro: "Alle strijders op een rij. Tik op een kolom om te sorteren en op een naam voor het hele verhaal.",
   },
 
   player: {
-    eyebrow: "Speler",
-    notFound: "Deze speler kennen we niet.",
-    back: "Terug naar alle spelers",
+    eyebrow: "WB3 🟨⬛ Spelersprofiel",
+    notFound: "Deze snuiter kennen we niet.",
+    back: "Terug naar de selectie",
     summary: ({ apps, min }) =>
-      `${apps} ${apps === 1 ? "competitieduel" : "competitieduels"} · ${min} minuten`,
+      apps === 0
+        ? "Nog geen competitieminuut. De technische staf houdt je in de gaten."
+        : `${apps} ${apps === 1 ? "competitiepot" : "competitiepotjes"} · ${min} minuten`,
     tileOefen: ({ v }) => `Oefen: ${v}`,
     trainingPct: "Training",
     trainingOf: ({ att, held }) => `${att} van ${held}`,
@@ -112,32 +140,37 @@ window.WB3_COPY = {
     didNotPlay: "Niet gespeeld",
     noMatches: "Nog geen wedstrijden gespeeld.",
     training: "Trainingen",
-    streak: ({ n }) => (n > 1 ? `${n} op rij aanwezig` : n === 1 ? "Laatste training aanwezig" : "Laatste training gemist"),
+    streak: ({ n }) =>
+      n > 1
+        ? `${n} trainingen op rij aanwezig. Hulde 💪🏻`
+        : n === 1
+          ? "Laatste training: aanwezig. Netjes."
+          : "Laatste training gemist. We oordelen niet, we signaleren alleen.",
   },
 
   matches: {
     title: "Wedstrijden",
-    intro: "Uitslagen, doelpuntenmakers en wat er verder gebeurde.",
+    intro: "Uitslagen, doelpuntenmakers en kleedkamerverhalen. De nette versie.",
     results: "Uitslagen",
-    fixtures: "Programma",
-    noResults: "Nog geen uitslagen.",
-    noFixtures: "Niks meer gepland.",
+    fixtures: "Voor in de agenda",
+    noResults: "Nog geen uitslagen. Op papier zijn we ongeslagen.",
+    noFixtures: "Niks meer gepland. Zet het weekendje maar in de agenda.",
   },
 
   training: {
     title: "Training",
-    intro: "Wie er was, en wie er (weer) niet was.",
+    intro: "Wie niet traint, voelt dat op zondag. En maandag. En eigenlijk de hele week.",
     sessions: "Trainingen",
     avg: "Gem. opkomst",
-    avgSub: "spelers per training",
+    avgSub: "strijders per training",
     best: "Drukste training",
     perSession: "Opkomst per training",
-    perSessionSub: "Aantal spelers aanwezig",
+    perSessionSub: "Aantal strijders op het veld",
     grid: "Wie was er?",
-    gridSub: "Gesorteerd op opkomst",
+    gridSub: "Gesorteerd op opkomst. We oordelen niet, we signaleren alleen.",
     present: "aanwezig",
     absent: "afwezig",
-    players: ({ n }) => (n === 1 ? "1 speler" : `${n} spelers`),
+    players: ({ n }) => (n === 1 ? "1 strijder" : `${n} strijders`),
     none: "Nog geen trainingen.",
   },
 };
