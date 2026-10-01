@@ -200,7 +200,7 @@
     ];
     const current = page === "player" ? "players" : page;
     document.getElementById("top").innerHTML = `<div class="wrap topbar-inner">
-      <a class="logo" href="./" aria-label="${te("site.title")}"><span class="logo-mark">${team()}</span><span class="logo-sub">${te("site.logoSub")}</span></a>
+      <a class="logo" href="./" aria-label="${te("site.title")}"><img class="crest" src="assets/clublogo.png" alt="" width="46" height="46"><span class="logo-text"><span class="logo-mark">${team()}</span><span class="logo-sub">${te("site.logoSub")}</span></span></a>
       <nav class="nav" aria-label="${te("nav.label")}">${nav
         .map(([k, href]) => `<a href="${href}"${k === current ? ' aria-current="page"' : ""}>${te("nav." + k)}</a>`)
         .join("")}</nav>

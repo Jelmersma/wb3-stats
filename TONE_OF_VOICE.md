@@ -74,4 +74,4 @@ De teamapp is binnenskamers, de site staat voor iedereen open. Daarom gelden dez
   - Barlow voor lopende tekst.
 - **Grafieken:** in het lichte thema zwart, omdat geel op wit onleesbaar is. In het donkere thema geel.
 - **Uitslagkleuren:** W groen, G grijs, V rood. Geel is van de club en dus geen uitslagkleur.
-- **Clublogo:** dat gebruiken we niet, want het is van de club.
+- **Clublogo:** het logo van V.V. Woudenberg (`site/assets/clublogo.png`, van de clubsite) staat in de kop, op verzoek van Felix. Verder gebruiken we het niet en we passen het nooit aan.
