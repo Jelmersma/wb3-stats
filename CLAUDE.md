@@ -3,7 +3,8 @@
 Statische website met de voetbalstatistieken van WB3 (seizoen 2026/27).
 Geen framework en geen npm. Het enige wat nodig is: Python 3 met `openpyxl`.
 
-- Live: https://jelmersma.github.io/wb3-stats/ (eigen domein volgt)
+- Live: https://wb3stats.nl (eigen domein; https://jelmersma.github.io/wb3-stats/ stuurt daarheen door)
+- DNS: Cloudflare (nameservers hugh/olga). Records op **DNS only** (grijze wolk), anders werkt het GitHub-certificaat niet.
 - Repo: https://github.com/Jelmersma/wb3-stats (publiek, GitHub Pages via Actions)
 
 ## Structuur
