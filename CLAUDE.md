@@ -44,6 +44,8 @@ Felix uploadt in de chat een nieuwe versie van de Excel en vraagt om een update.
 - Uitslag: `x-y (W/G/V)`. De letter bepaalt wie er won, dus de volgorde van de cijfers maakt niet uit.
 - Jaartallen: het seizoen loopt van juli t/m juni. Datums die in het verkeerde jaar staan, worden automatisch gecorrigeerd.
 - Namen in de Stats-tekst die niet in de selectie staan (leenspelers), tellen mee voor de wedstrijd maar niet in de spelersstats. Daarover verschijnt een melding.
+- Bijnamen/alternatieve namen in de Stats-tekst staan in `ALIASES` bovenin `build.py` (bv. "Robin H." = Hanna). Bevestigt Felix dat een onbekende naam een bestaande speler is, voeg hem daar toe.
+- Krijg je aanvullingen in de chat (bv. een vergeten Assists-regel)? Werk dan `data/WB3 Stats.xlsx` bij met openpyxl (laden zónder `data_only`, zodat formules blijven) en vraag Felix het ook in zijn eigen Excel te zetten. Anders verdwijnt het bij de volgende upload weer.
 
 ## Tekst en tone of voice
 

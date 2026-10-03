@@ -44,6 +44,13 @@ TEXT_KEYS = {
 }
 OWN_GOAL = {"eigen goal", "eigen doelpunt", "own goal", "og", "e.d.", "ed"}
 
+# Andere namen die in de Stats-tekst gebruikt worden -> naam zoals in de selectie
+ALIASES = {
+    "robin h.": "Hanna",
+    "robin h": "Hanna",
+    "robin hanna": "Hanna",
+}
+
 warnings: list[str] = []
 notes: list[str] = []
 
@@ -145,6 +152,8 @@ class Roster:
     def resolve(self, raw: str) -> tuple[dict | None, str]:
         """Zoek een speler bij een naam uit vrije tekst."""
         n = norm(raw)
+        if n in ALIASES:
+            n = norm(ALIASES[n])
         if n in self.players:
             return self.players[n], "exact"
         sq = squash(raw)
