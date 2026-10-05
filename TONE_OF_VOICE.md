@@ -57,6 +57,17 @@ De teamapp is binnenskamers, de site staat voor iedereen open. Daarom gelden dez
 | Training (sneer naar wie er niet is) | Elke donderdag ligt het veld er klaar. Een deel van de selectie ook. De rest had weer een goed argument. |
 | Kaarten | Strijd. Inzet. Beetje zeiken. Soms een gele. |
 | Footer | Klachten over je statistieken? Ga eerst bij jezelf te rade. … Meld je bij de technische staf. Gaat waarschijnlijk niks opleveren. |
+| Nog nooit getraind | Nog nooit op training gezien. Weet je de weg naar De Grift nog? / 0 van 5. Talent heeft blijkbaar geen onderhoud nodig. |
+| Alle trainingen | Nog nooit een training overgeslagen. Verdacht. |
+| Geen competitieminuut | Nog geen minuut competitie. Fris als een hoentje voor als het echt moet. |
+
+## Varianten
+
+Een zin die op veel plekken terugkomt (trainingsregel per speler, kop boven een uitslag, spelers zonder minuten), schrijf je als **lijst met varianten** in `copy.js`.
+- **Per speler:** de site kiest per speler vast één variant. Die wisselt mee als de cijfers veranderen.
+- **Bij uitslagen:** de koppen rouleren op volgorde, zodat twee wedstrijden achter elkaar nooit hetzelfde krijgen.
+- **Nieuwe varianten:** die kun je altijd toevoegen. Mik op 3 tot 5 per situatie.
+- **Sneer naar wie weinig traint:** mag, mits droog. Geen namen, geen privézaken. Het "goede argument" is de running gag.
 
 ## Design
 

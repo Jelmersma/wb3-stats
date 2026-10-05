@@ -2,6 +2,8 @@
  * Alle teksten van de site staan hier, in de WB3-tone of voice (zie TONE_OF_VOICE.md).
  * {naam} wordt ingevuld door de site. Een functie mag ook, bv. voor enkelvoud/meervoud
  * of een tekst die afhangt van de uitslag.
+ * Een lijst [ ... ] = varianten. De site kiest er vast één per speler/wedstrijd,
+ * zodat niet overal hetzelfde zinnetje staat. Varianten toevoegen mag altijd.
  */
 window.WB3_COPY = {
   site: {
@@ -32,12 +34,20 @@ window.WB3_COPY = {
     title: "Zo staan we ervoor",
     titleSub: ({ played, v, w }) =>
       played === 0
-        ? "Nog niks gespeeld. Op papier zijn we ongeslagen."
+        ? ["Nog niks gespeeld. Op papier zijn we ongeslagen."]
         : v === 0 && w > 0
-          ? "Ongeslagen. Lekker. Maar we hebben nog helemaal niks."
+          ? [
+              "Ongeslagen. Lekker. Maar we hebben nog helemaal niks.",
+              `Nog niet verloren. Rustig blijven, het is pas ${played === 1 ? "één potje" : `${played} potjes`}.`,
+              "Ongeslagen. De kantine fluistert al over de schaal. Niet doen.",
+            ]
           : v === 0
-            ? "Nog niet verloren. Ze moeten er wel een keer in."
-            : "Geen man overboord. Elke pot is vanaf nu een finale.",
+            ? ["Nog niet verloren. Ze moeten er wel een keer in.", "Ongeslagen, maar ook nog niks gewonnen. Komaan."]
+            : [
+                "Geen man overboord. Elke pot is vanaf nu een finale.",
+                "We hebben nog alles in eigen hand. Zeggen we elk jaar.",
+                "Op papier gaat het prima. Op het veld komt het nog.",
+              ],
     points: "Punten",
     played: "Gespeeld",
     record: "W–G–V",
@@ -70,7 +80,7 @@ window.WB3_COPY = {
     trainingSub: "Donderdag op het veld. Of weer een goed argument.",
     cards: "Kaartenboekje",
     cardsSub: "Strijd. Inzet. Beetje zeiken. Soms een gele.",
-    empty: "Nog niemand. Kans!",
+    empty: ["Nog niemand. Kans!", "Leeg. Wie durft?", "Nog niks. Wie opent het klassement?"],
     more: ({ n }) => (n === 1 ? "en nog 1 strijder" : `en nog ${n} strijders`),
   },
 
@@ -111,13 +121,15 @@ window.WB3_COPY = {
     // Korte kop boven de uitslag, zoals op de posters in het kanaal
     verdict: ({ result, ours, theirs }) => {
       const diff = ours - theirs;
-      if (result === "W" && diff >= 4) return "Dominant.";
-      if (result === "W" && diff === 1) return "Zakelijk. Drie punten.";
-      if (result === "W") return "Heerlijk potje.";
-      if (result === "G" && ours === 0) return "Brilstand. Niemand blij.";
-      if (result === "G") return "Kansen genoeg. Ze moeten er wel in.";
-      if (diff <= -3) return "Daar blijven we niet in hangen.";
-      return "Geen man overboord.";
+      if (result === "W" && diff >= 4) return ["Dominant.", "Walk in the park.", "Galacticos.", "Niks aan te doen."];
+      if (result === "W" && diff === 1)
+        return ["Zakelijk. Drie punten.", "Mooi is anders. Drie punten.", "Op karakter.", "Lelijk winnen telt ook."];
+      if (result === "W") return ["Heerlijk potje.", "Lekker potje.", "Netjes gedaan.", "Zo kan het ook."];
+      if (result === "G" && ours === 0) return ["Brilstand. Niemand blij.", "0-0. Daar kwam niemand voor."];
+      if (result === "G")
+        return ["Kansen genoeg. Ze moeten er wel in.", "Een punt. We nemen het mee.", "Puntendeling. Ze gaan er een keer in."];
+      if (diff <= -3) return ["Daar blijven we niet in hangen.", "Pijnlijk. Wissen en door.", "Die vergeten we snel."];
+      return ["Geen man overboord.", "Kop op. Volgende week beter.", "We nemen het mee naar de training. Wie er dan is."];
     },
   },
 
@@ -132,7 +144,12 @@ window.WB3_COPY = {
     back: "Terug naar de selectie",
     summary: ({ apps, min }) =>
       apps === 0
-        ? "Nog geen competitieminuut. De technische staf houdt je in de gaten."
+        ? [
+            "Nog geen competitieminuut. De technische staf houdt je in de gaten.",
+            "Nog geen minuut competitie. Fris als een hoentje voor als het echt moet.",
+            "Nog niet in actie geweest. Vast bewaard voor de belangrijke potjes.",
+            "0 competitieminuten. Het seizoen is lang. Heel lang.",
+          ]
         : `${apps} ${apps === 1 ? "competitiepot" : "competitiepotjes"} · ${min} minuten`,
     tileOefen: ({ v }) => `Oefen: ${v}`,
     trainingPct: "Training",
@@ -141,12 +158,50 @@ window.WB3_COPY = {
     didNotPlay: "Niet gespeeld",
     noMatches: "Nog geen wedstrijden gespeeld.",
     training: "Trainingen",
-    streak: ({ n }) =>
-      n > 1
-        ? `${n} trainingen op rij aanwezig. Hulde 💪🏻`
-        : n === 1
-          ? "Laatste training: aanwezig. Netjes."
-          : "Laatste training gemist. We oordelen niet, we signaleren alleen.",
+    // Regel onder de trainingsbolletjes. {n} = reeks, {att} = aanwezig, {held} = gehouden
+    streak: ({ n, att, held }) => {
+      if (att === 0)
+        return [
+          "Nog geen training gezien. Het veld ligt er elke donderdag, hoor.",
+          "Trainingsopkomst: nul. We oordelen niet, we signaleren alleen.",
+          "Nog nooit op training gezien. Weet je de weg naar De Grift nog?",
+          "0 van {held}. Talent heeft blijkbaar geen onderhoud nodig.",
+          "Nog geen donderdag gezien. De goede argumenten worden elke week beter.",
+        ];
+      if (n === held && held >= 3)
+        return [
+          "Nog geen training gemist. De rest kan een voorbeeld nemen.",
+          "{held} van {held}. Hulde 💪🏻",
+          "Elke donderdag present. Iemand moet het goede voorbeeld geven.",
+          "Nog nooit een training overgeslagen. Verdacht.",
+        ];
+      if (n > 1)
+        return [
+          "{n} trainingen op rij aanwezig. Hulde 💪🏻",
+          "{n} keer op rij op het veld. De technische staf heeft het genoteerd.",
+          "{n} op rij. Zo worden kampioenen gemaakt. Zeggen ze.",
+          "Al {n} donderdagen op rij present. Dat noemen we een reeks.",
+        ];
+      if (n === 1)
+        return [
+          "Laatste training: aanwezig. Netjes.",
+          "Vorige donderdag gewoon op het veld. Zo hoort het.",
+          "Laatste training erbij. Nu nog volhouden.",
+          "Vorige week present. Het begin van een reeks?",
+        ];
+      if (att / held < 0.4)
+        return [
+          "Laatste training gemist. We oordelen niet, we signaleren alleen.",
+          "Vorige donderdag niet gezien. Vast weer een goed argument.",
+          "{att} van {held}. Het veld mist je. De rest valt mee.",
+          "Laatste keer afwezig. De agenda zat vast weer vol.",
+        ];
+      return [
+        "Laatste training gemist. Eén keertje mag. Eén.",
+        "Vorige donderdag overgeslagen. Volgende week weer, toch?",
+        "Laatste training niet gezien. De reeks begint gewoon opnieuw.",
+      ];
+    },
   },
 
   matches: {

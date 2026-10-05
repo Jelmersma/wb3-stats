@@ -12,11 +12,25 @@
   const esc = (s) =>
     String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
-  function t(path, vars) {
-    const v = path.split(".").reduce((o, k) => (o == null ? o : o[k]), C);
+  // Kleine, stabiele hash: dezelfde seed geeft altijd dezelfde variant
+  const hash = (s) => {
+    let h = 2166136261;
+    for (const ch of String(s)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+    return h >>> 0;
+  };
+
+  // Een tekst in copy.js mag een string, functie of lijst met varianten zijn.
+  // Bij een lijst kiest vars.index (op volgorde rouleren) of anders vars.seed
+  // (bv. speler-id, vaste maar 'willekeurige' keuze) welke variant je ziet.
+  function t(path, vars = {}) {
+    let v = path.split(".").reduce((o, k) => (o == null ? o : o[k]), C);
     if (v == null) return path;
-    if (typeof v === "function") return v(vars || {});
-    return String(v).replace(/\{(\w+)\}/g, (_, k) => (vars && vars[k] != null ? vars[k] : ""));
+    for (let i = 0; i < 3; i++) {
+      if (typeof v === "function") v = v(vars);
+      else if (Array.isArray(v)) v = v.length ? v[(vars.index ?? hash(vars.seed ?? path)) % v.length] : "";
+      else break;
+    }
+    return String(v).replace(/\{(\w+)\}/g, (_, k) => (vars[k] != null ? vars[k] : ""));
   }
   const te = (path, vars) => esc(t(path, vars));
 
@@ -165,7 +179,7 @@
             </li>`
           )
           .join("")}</ol>${more ? `<p class="more">${te("boards.more", { n: more })}</p>` : ""}`
-      : `<p class="empty">${te("boards.empty")}</p>`;
+      : `<p class="empty">${te("boards.empty", { seed: title })}</p>`;
     return `<article class="card board">
       <header><h3>${esc(title)}</h3>${sub ? `<span class="sub">${esc(sub)}</span>` : ""}</header>
       ${body}
@@ -235,7 +249,7 @@
       big: true,
       eyebrow: te("home.eyebrow", { season: D.season }),
       title: te("home.title"),
-      sub: te("home.titleSub", tc),
+      sub: te("home.titleSub", { ...tc, seed: `${tc.played}:${tc.points}` }),
       extra: `<div class="hero-grid">
         <div class="hero-fig"><span class="hero-num">${tc.points}</span><span class="hero-lbl">${te("home.points")}</span></div>
         <dl class="hero-stats">
@@ -254,7 +268,7 @@
       ? `<article class="card match-card">
           <header class="card-head"><h2 class="h-card">${te("home.last")}</h2>${resBadge(last)}</header>
           ${meta(last)}
-          <p class="verdict">${te("match.verdict", last)}</p>
+          <p class="verdict">${te("match.verdict", { ...last, index: played.length - 1 })}</p>
           ${scoreline(last)}
           ${events(last)}
           ${notes(last)}
@@ -472,7 +486,7 @@
     root.innerHTML = `${band({
       eyebrow: te("player.eyebrow"),
       title: esc(p.name),
-      sub: te("player.summary", { apps: c.apps, min: c.min }),
+      sub: te("player.summary", { apps: c.apps, min: c.min, seed: `${p.id}:${c.apps}` }),
     })}
       <section class="section"><div class="wrap">
         <div class="tiles tiles-6">${tiles}</div>
@@ -484,7 +498,7 @@
         </article>
         <article class="card">
           <header class="card-head"><h2 class="h-card">${te("player.training")}</h2><span class="sub">${te("player.trainingOf", { att: tr.att, held: tr.held })}</span></header>
-          ${D.trainings.length ? `<div class="dots">${dots}</div><p class="sub">${te("player.streak", { n: tr.streak })}</p>` : `<p class="empty">${te("training.none")}</p>`}
+          ${D.trainings.length ? `<div class="dots">${dots}</div><p class="sub">${te("player.streak", { n: tr.streak, att: tr.att, held: tr.held, seed: `${p.id}:${tr.att}:${tr.held}` })}</p>` : `<p class="empty">${te("training.none")}</p>`}
         </article>
       </div></section>
       <section class="section section-tight"><div class="wrap"><a class="link-more" href="spelers.html">← ${te("player.back")}</a></div></section>`;
@@ -518,7 +532,7 @@
             .map(
               (m) => `<article class="card match-card" id="${esc(m.id)}">
                 ${meta(m, resBadge(m))}
-                <p class="verdict sm">${te("match.verdict", m)}</p>
+                <p class="verdict sm">${te("match.verdict", { ...m, index: played.indexOf(m) })}</p>
                 ${scoreline(m, "sm")}
                 ${events(m)}
                 ${notes(m)}
@@ -589,13 +603,15 @@
     const n = S.length;
     const counts = S.map((s) => s.present.length);
     const avg = n ? counts.reduce((a, b) => a + b, 0) / n : 0;
-    const bestI = counts.indexOf(Math.max(...counts));
+    const maxCount = Math.max(...counts);
+    const bestDates = S.filter((s, i) => counts[i] === maxCount).map((s) => s.date);
+    const bestWhen = bestDates.length === 1 ? dLong(bestDates[0]) : bestDates.map(dShort).join(" & ");
 
     const tiles = n
       ? `<div class="tiles">
           <div class="card tile"><span class="tile-lbl">${te("training.sessions")}</span><span class="tile-val">${n}</span></div>
           <div class="card tile"><span class="tile-lbl">${te("training.avg")}</span><span class="tile-val">${avg.toLocaleString("nl-NL", { maximumFractionDigits: 1 })}</span><span class="tile-sub">${te("training.avgSub")}</span></div>
-          <div class="card tile"><span class="tile-lbl">${te("training.best")}</span><span class="tile-val">${counts[bestI]}</span><span class="tile-sub">${esc(dLong(S[bestI].date))}</span></div>
+          <div class="card tile"><span class="tile-lbl">${te("training.best")}</span><span class="tile-val">${maxCount}</span><span class="tile-sub">${esc(bestWhen)}</span></div>
         </div>`
       : "";
 
