@@ -121,7 +121,7 @@ window.WB3_COPY = {
     // Korte kop boven de uitslag, zoals op de posters in het kanaal
     verdict: ({ result, ours, theirs }) => {
       const diff = ours - theirs;
-      if (result === "W" && diff >= 4) return ["Dominant.", "Walk in the park.", "Galacticos.", "Niks aan te doen."];
+      if (result === "W" && diff >= 4) return ["Dominant.", "Walk in the park.", "Galacticos.", "Eenrichtingsverkeer."];
       if (result === "W" && diff === 1)
         return ["Zakelijk. Drie punten.", "Mooi is anders. Drie punten.", "Op karakter.", "Lelijk winnen telt ook."];
       if (result === "W") return ["Heerlijk potje.", "Lekker potje.", "Netjes gedaan.", "Zo kan het ook."];
