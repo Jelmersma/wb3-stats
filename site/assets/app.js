@@ -65,6 +65,11 @@
   const matchUrl = (m) => `wedstrijden.html#${encodeURIComponent(m.id)}`;
   const team = () => te("site.team");
 
+  // Competitiestand (overgenomen van de clubsite, zie data/stand.json)
+  const ST = D.stand && D.stand.rows && D.stand.rows.length ? D.stand : null;
+  const usRow = ST ? ST.rows.find((r) => r.us) : null;
+  const standOf = (m) => (ST && m.oppKey ? ST.rows.find((r) => r.key === m.oppKey) : null);
+
   // ------------------------------------------------------------------ icons
 
   const ICONS = {
@@ -203,6 +208,61 @@
 
   const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
 
+  function standCard() {
+    const cols = (k) => te("stand.cols." + k);
+    const rows = ST.rows
+      .map((r) => {
+        const gd = r.gf - r.ga;
+        return `<tr${r.us ? ' class="us"' : ""}>
+          <td class="n pos">${r.pos}</td>
+          <th scope="row" class="team">${esc(r.team)}</th>
+          <td class="n">${r.played}</td>
+          <td class="n opt">${r.w}</td>
+          <td class="n opt">${r.d}</td>
+          <td class="n opt">${r.l}</td>
+          <td class="n opt">${r.gf}–${r.ga}</td>
+          <td class="n">${gd > 0 ? "+" : ""}${gd}</td>
+          <td class="n pts">${r.pts}${r.pm ? `<sup title="${te("stand.pm", { n: r.pm })}">*</sup>` : ""}</td>
+        </tr>`;
+      })
+      .join("");
+    return `<article class="card card-flush stand-card">
+      <header class="card-head pad"><div>
+        <h2 class="h-card">${te("stand.title", { competitie: ST.competitie })}</h2>
+        ${usRow ? `<span class="sub">${te("stand.sub", { pos: usRow.pos, seed: `${usRow.pos}:${usRow.played}` })}</span>` : ""}
+      </div></header>
+      <div class="table-scroll"><table class="stand">
+        <thead><tr>
+          <th class="n" scope="col">${cols("pos")}</th>
+          <th class="team" scope="col">${cols("team")}</th>
+          <th class="n" scope="col" title="${cols("playedLong")}">${cols("played")}</th>
+          <th class="n opt" scope="col" title="${te("result.W")}">${cols("w")}</th>
+          <th class="n opt" scope="col" title="${te("result.G")}">${cols("d")}</th>
+          <th class="n opt" scope="col" title="${te("result.V")}">${cols("l")}</th>
+          <th class="n opt" scope="col">${cols("goals")}</th>
+          <th class="n" scope="col" title="${cols("gdLong")}">${cols("gd")}</th>
+          <th class="n" scope="col" title="${cols("ptsLong")}">${cols("pts")}</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+      <p class="stand-src">${te("stand.source", { date: fmt(ST.opgehaald, { day: "numeric", month: "long" }) })}${
+        ST.bron ? ` · <a href="${esc(ST.bron)}" rel="noopener">vvwoudenberg.nl</a>` : ""
+      }</p>
+    </article>`;
+  }
+
+  function oppStandLine(m) {
+    const o = standOf(m);
+    if (!o || !usRow || o.us) return "";
+    return `<p class="opp-stand">${te("match.oppStand", {
+      team: m.opponent,
+      pos: o.pos,
+      pts: o.pts,
+      above: o.pos < usRow.pos,
+      seed: m.id,
+    })}</p>`;
+  }
+
   // ------------------------------------------------------------------ chrome
 
   function chrome() {
@@ -253,7 +313,11 @@
       extra: `<div class="hero-grid">
         <div class="hero-fig"><span class="hero-num">${tc.points}</span><span class="hero-lbl">${te("home.points")}</span></div>
         <dl class="hero-stats">
-          <div><dt>${te("home.played")}</dt><dd>${tc.played}</dd></div>
+          ${
+            usRow
+              ? `<div><dt>${te("home.place")}</dt><dd>${te("home.placeValue", { pos: usRow.pos })}</dd></div>`
+              : `<div><dt>${te("home.played")}</dt><dd>${tc.played}</dd></div>`
+          }
           <div><dt>${te("home.record")}</dt><dd>${tc.w}–${tc.g}–${tc.v}</dd></div>
           <div><dt>${te("home.goals")}</dt><dd>${tc.gf}–${tc.ga}</dd></div>
           <div><dt>${te("home.goalDiff")}</dt><dd>${gd > 0 ? "+" : ""}${gd}</dd></div>
@@ -282,6 +346,7 @@
           ${meta(nxt)}
           ${scoreline(nxt)}
           <p class="next-when">${esc(dLong(nxt.date))}${nxt.time ? ` · ${esc(nxt.time)}` : ""}</p>
+          ${oppStandLine(nxt)}
           ${
             next.length > 1
               ? `<div class="after"><h3 class="h-mini">${te("home.after")}</h3><ul class="fixture-mini">${next
@@ -323,6 +388,7 @@
 
     root.innerHTML = `${hero}
       <section class="section"><div class="wrap grid-2">${lastCard}${nextCard}</div></section>
+      ${ST ? `<section class="section section-tight"><div class="wrap">${standCard()}</div></section>` : ""}
       <section class="section section-tight"><div class="wrap">
         <div class="section-head">
           <div><h2>${te("home.boards")}</h2><p class="sub">${te("home.boardsSub")}</p></div>
@@ -515,7 +581,8 @@
       title: te("matches.title"),
       sub: te("matches.intro"),
     })}
-      <section class="section"><div class="wrap">
+      ${ST ? `<section class="section"><div class="wrap">${standCard()}</div></section>` : ""}
+      <section class="section${ST ? " section-tight" : ""}"><div class="wrap">
         <div class="toolbar">${seg("soort", ["all", "comp", "oefen"], state.soort)}</div>
         <div id="match-body"></div>
       </div></section>`;
@@ -553,7 +620,9 @@
               return `${head}<li class="fx${isNext ? " fx-next" : ""}" id="${esc(m.id)}">
                 <span class="fx-date num">${esc(dDay(m.date))}</span>
                 <span class="fx-time num">${m.time ? esc(m.time) : ""}</span>
-                <span class="fx-opp">${esc(m.opponent)}${isNext ? ` <span class="chip chip-accent">${te("match.next")}</span>` : ""}${
+                <span class="fx-opp">${esc(m.opponent)}${
+                  standOf(m) ? ` <span class="fx-pos">${te("home.placeValue", { pos: standOf(m).pos })}</span>` : ""
+                }${isNext ? ` <span class="chip chip-accent">${te("match.next")}</span>` : ""}${
                 past ? ` <span class="chip">${te("match.pending")}</span>` : ""
               }</span>
                 <span class="fx-where"><span class="tag${m.home ? " tag-home" : ""}">${te(m.home ? "match.home" : "match.away")}</span></span>

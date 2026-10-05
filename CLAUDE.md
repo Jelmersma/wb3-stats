@@ -23,6 +23,7 @@ Geen framework en geen npm. Het enige wat nodig is: Python 3 met `openpyxl`.
 Felix uploadt in de chat een nieuwe versie van de Excel en vraagt om een update.
 
 1. Kopieer de geüploade Excel naar `data/WB3 Stats.xlsx` (overschrijven).
+1b. Werk de competitiestand bij (zie *Competitiestand* hieronder).
 2. Draai `python3 build.py`.
 3. Lees het rapport:
    - **Opmerkingen**: automatische correcties (bv. jaartal). Kort noemen, verder geen actie.
@@ -30,6 +31,19 @@ Felix uploadt in de chat een nieuwe versie van de Excel en vraagt om een update.
 4. Check het resultaat lokaal (`python3 -m http.server 8321 --directory site`): het overzicht, de laatste wedstrijd en de klassementen.
 5. Commit en push: `git add -A && git commit -m "Stats bijgewerkt t/m <datum laatste wedstrijd>" && git push`.
 6. GitHub Pages zet het binnen ±1 minuut live. Meld Felix kort wat er nieuw is (uitslag, topscorer, opvallende dingen).
+
+### Competitiestand
+
+- **Waar staat hij:** de stand komt van de clubsite (https://www.vvwoudenberg.nl/424/14594/competitie/) en staat in `data/stand.json`.
+- **Niet via een script:** de clubsite zit achter Cloudflare-botbeveiliging. `curl` en GitHub Actions worden geblokkeerd. **Omzeil dat niet.**
+- **Wel via het browservenster:** open de pagina daar (cookiemelding: "niet toestaan") en voer dit uit met `javascript_tool`:
+
+  ```js
+  JSON.stringify({ competitie: document.title.split(" - ")[0].trim(), rows: [...document.querySelectorAll("table.StandTabel tbody tr")].map(tr => { const c = [...tr.children].map(td => td.textContent.trim()); return { pos: +c[0], team: c[1], played: +c[2], w: +c[3], d: +c[4], l: +c[5], pts: +c[6], gf: +c[7], ga: +c[9], pm: +c[10] }; }) })
+  ```
+
+- **Opslaan:** schrijf het resultaat naar `data/stand.json`, met `"bron"` (de URL) en `"opgehaald"` (datum van vandaag, `YYYY-MM-DD`) erbij.
+- **Controle:** `build.py` vergelijkt de regel van `Woudenberg 3` met de Excel en meldt het als de stand verouderd is of afwijkt. Het meldt ook een tegenstander die niet in de stand voorkomt.
 
 ### Bekende meldingen (geaccepteerd)
 

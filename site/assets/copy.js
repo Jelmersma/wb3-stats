@@ -50,6 +50,8 @@ window.WB3_COPY = {
               ],
     points: "Punten",
     played: "Gespeeld",
+    place: "Plek",
+    placeValue: "{pos}e",
     record: "W–G–V",
     goals: "Doelpunten",
     goalDiff: "Doelsaldo",
@@ -118,6 +120,21 @@ window.WB3_COPY = {
     pending: "Uitslag volgt",
     next: "Volgende",
     against: ({ score, opp }) => `${score} tegen ${opp}`,
+    // Onder de volgende wedstrijd: waar staat de tegenstander?
+    oppStand: ({ team, pos, pts, above }) => {
+      const p = `${pts} ${pts === 1 ? "punt" : "punten"}`;
+      return above
+        ? [
+            `${team} staat ${pos}e met ${p}. Daar gaan we wat aan doen.`,
+            `${team} staat boven ons (${pos}e, ${p}). Niet voor lang.`,
+            `${team}: ${pos}e met ${p}. Tijd om dat recht te zetten.`,
+          ]
+        : [
+            `${team} staat ${pos}e met ${p}. Op papier moeten we hier de volle buit pakken.`,
+            `${team}: ${pos}e met ${p}. Op papier een makkie. Op papier.`,
+            `${team} staat ${pos}e. Onderschatten is voor amateurs. O wacht.`,
+          ];
+    },
     // Korte kop boven de uitslag, zoals op de posters in het kanaal
     verdict: ({ result, ours, theirs }) => {
       const diff = ours - theirs;
@@ -131,6 +148,34 @@ window.WB3_COPY = {
       if (diff <= -3) return ["Daar blijven we niet in hangen.", "Pijnlijk. Wissen en door.", "Die vergeten we snel."];
       return ["Geen man overboord.", "Kop op. Volgende week beter.", "We nemen het mee naar de training. Wie er dan is."];
     },
+  },
+
+  stand: {
+    title: "Stand {competitie}",
+    sub: ({ pos }) =>
+      pos === 1
+        ? ["Koploper. We hebben nog helemaal niks.", "Bovenaan. Rustig blijven.", "Nummer 1. De kantine fluistert al. Niet doen."]
+        : pos <= 3
+          ? ["In het spoor van de koploper. Komaan.", "Bovenin. Nu nog die laatste stap.", "Dichtbij. Op papier."]
+          : pos <= 8
+            ? ["Middenmoot. Daar horen we niet.", "Er zit nog genoeg in. Zeggen we elk jaar."]
+            : ["Geen man overboord. Het seizoen is lang.", "Onderin. Tijd voor een goed gesprek."],
+    cols: {
+      pos: "#",
+      team: "Team",
+      played: "G",
+      playedLong: "Gespeeld",
+      w: "W",
+      d: "GL",
+      l: "V",
+      goals: "Doelp.",
+      gd: "+/−",
+      gdLong: "Doelsaldo",
+      pts: "P",
+      ptsLong: "Punten",
+    },
+    pm: ({ n }) => `${n} ${n === 1 ? "punt" : "punten"} in mindering`,
+    source: "Overgenomen van de clubsite op {date}",
   },
 
   players: {

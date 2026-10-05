@@ -32,6 +32,8 @@ except ImportError:
 ROOT = Path(__file__).resolve().parent
 DEFAULT_XLSX = ROOT / "data" / "WB3 Stats.xlsx"
 OUT_JS = ROOT / "site" / "assets" / "data.js"
+STAND_JSON = ROOT / "data" / "stand.json"
+OUR_TEAM = "Woudenberg 3"  # zo heten wij in de competitiestand
 SITE = ROOT / "site"
 
 STAT_KEYS = ["goals", "assists", "snuiter", "geel", "rood"]
@@ -395,6 +397,50 @@ def read_matches(ws, roster: Roster, season: Season):
     return matches
 
 
+# ---------------------------------------------------------------- competitiestand
+
+def team_key(name) -> str:
+    """'Merino's de 2' en 'De Merino's 2' -> dezelfde sleutel."""
+    return " ".join(sorted(re.sub(r"[^a-z0-9']+", " ", norm(name)).split()))
+
+
+def read_stand(matches, ours):
+    """Leest data/stand.json (overgenomen van de clubsite) en controleert hem."""
+    if not STAND_JSON.exists():
+        notes.append("Geen data/stand.json gevonden: de site toont geen competitiestand.")
+        return None
+    st = json.loads(STAND_JSON.read_text(encoding="utf-8"))
+    rows = st.get("rows") or []
+    for r in rows:
+        r["key"] = team_key(r["team"])
+        r["us"] = r["key"] == team_key(OUR_TEAM)
+    keys = {r["key"] for r in rows}
+
+    us = next((r for r in rows if r["us"]), None)
+    if not us:
+        warn(f"Stand: '{OUR_TEAM}' niet gevonden in data/stand.json.")
+    else:
+        mine = {"played": ours["played"], "w": ours["w"], "d": ours["g"], "l": ours["v"],
+                "gf": ours["gf"], "ga": ours["ga"], "pts": ours["points"]}
+        if us["played"] < mine["played"]:
+            warn(f"Stand is verouderd: daarin {us['played']} gespeeld, in de Excel {mine['played']}. "
+                 "Haal de stand opnieuw op (zie CLAUDE.md).")
+        elif us["played"] > mine["played"]:
+            warn(f"Stand is verder dan de Excel: daarin {us['played']} gespeeld, in de Excel {mine['played']}. "
+                 "Mist er een wedstrijd in de Excel?")
+        else:
+            diff = [f"{k} {us[k]} vs {mine[k]}" for k in mine if us[k] != mine[k]]
+            if diff:
+                warn("Stand en Excel verschillen voor " + OUR_TEAM + ": " + ", ".join(diff) + " (stand vs Excel).")
+
+    for m in matches:
+        m["oppKey"] = team_key(m["opponent"])
+        if m["soort"] == "comp" and rows and m["oppKey"] not in keys:
+            warn(f"Tegenstander '{m['opponent']}' niet gevonden in de stand (andere schrijfwijze?).")
+    return {"competitie": st.get("competitie"), "bron": st.get("bron"),
+            "opgehaald": st.get("opgehaald"), "rows": rows}
+
+
 # ---------------------------------------------------------------- main
 
 def main():
@@ -524,6 +570,8 @@ def main():
         present = [roster.players[k]["id"] for k, vals in train_rows.items() if (vals.get(s["col"]) or 0) > 0]
         trainings.append({"date": s["date"].strftime("%Y-%m-%d"), "present": sorted(present)})
 
+    stand = read_stand(matches, team["comp"])
+
     now = dt.datetime.now()
     data = {
         "generated": now.strftime("%Y-%m-%dT%H:%M"),
@@ -532,6 +580,7 @@ def main():
         "players": players_out,
         "matches": matches,
         "trainings": trainings,
+        "stand": stand,
     }
 
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
@@ -560,6 +609,9 @@ def main():
     print(f"  Oefen:      {to['played']} gespeeld ({to['w']}W {to['g']}G {to['v']}V, {to['gf']}-{to['ga']})")
     print(f"  Programma:  {sum(not m['played'] for m in matches)} wedstrijden nog te spelen")
     print(f"  Training:   {len(trainings)} trainingen")
+    if stand and any(r["us"] for r in stand["rows"]):
+        u = next(r for r in stand["rows"] if r["us"])
+        print(f"  Stand:      {u['pos']}e van {len(stand['rows'])} ({stand['competitie']}, opgehaald {stand['opgehaald']})")
     if notes:
         print(f"\nOpmerkingen ({len(notes)}):")
         for n in notes:

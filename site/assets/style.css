@@ -825,6 +825,100 @@ a.res:hover {
   }
 }
 
+/* ------------------------------------------------------------ competitiestand */
+
+.stand-card .card-head.pad {
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+.table-scroll {
+  overflow-x: auto;
+}
+table.stand {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.stand th,
+.stand td {
+  padding: 9px 10px;
+  text-align: right;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+.stand thead th {
+  font: 700 13px/1 var(--font-cond);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  border-bottom: 2px solid var(--ink);
+}
+.stand th:first-child,
+.stand td:first-child {
+  padding-left: 20px;
+}
+.stand th:last-child,
+.stand td:last-child {
+  padding-right: 20px;
+}
+.stand .team {
+  text-align: left;
+  width: 100%;
+}
+.stand tbody .team {
+  font-weight: 600;
+}
+.stand td.pos {
+  color: var(--muted);
+  font-weight: 700;
+}
+.stand td.pts {
+  font: 400 20px/1 var(--font-display);
+}
+.stand tbody tr:last-child > * {
+  border-bottom: 0;
+}
+.stand tr.us > * {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-bottom-color: transparent;
+}
+.stand tr.us td.pos {
+  color: var(--on-accent);
+}
+.stand-src {
+  margin: 0;
+  padding: 10px 20px 14px;
+  font-size: 13px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+}
+.stand-src a {
+  color: inherit;
+}
+@media (max-width: 520px) {
+  .stand .opt {
+    display: none;
+  }
+  .stand th,
+  .stand td {
+    padding: 9px 7px;
+  }
+}
+.opp-stand {
+  margin: 10px 0 0;
+  text-align: center;
+  color: var(--ink-2);
+  font-size: 14.5px;
+}
+.fx-pos {
+  margin-left: 4px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
 /* ------------------------------------------------------------ meter (minuten, training) */
 
 .meter {
