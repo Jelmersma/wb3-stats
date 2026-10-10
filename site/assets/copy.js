@@ -118,6 +118,7 @@ window.WB3_COPY = {
     tomorrow: "Morgen al. Rustig aan vanavond.",
     inDays: ({ n }) => `Over ${n} dagen`,
     pending: "Uitslag volgt",
+    viaChat: "Vers van de telefoon · minuten volgen",
     next: "Volgende",
     against: ({ score, opp }) => `${score} tegen ${opp}`,
     // Onder de volgende wedstrijd: waar staat de tegenstander?
@@ -176,6 +177,7 @@ window.WB3_COPY = {
     },
     pm: ({ n }) => `${n} ${n === 1 ? "punt" : "punten"} in mindering`,
     source: "Overgenomen van de clubsite op {date}",
+    stale: "Stand van {date}. Ons laatste potje zit er nog niet in, de clubsite loopt achter op ons.",
   },
 
   players: {

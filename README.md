@@ -18,6 +18,18 @@ python3 build.py
 git add -A && git commit -m "Stats bijgewerkt" && git push
 ```
 
+## Snel een uitslag zetten via je telefoon
+
+1. Open de Claude-app en ga naar **Code**.
+2. Start een sessie op de repo **Jelmersma/wb3-stats**.
+3. Typ de uitslag, bijvoorbeeld:
+
+   > WB3 – Merino's 3-1 gewonnen. Goals Tom 2x, Mark. Assists Sander, Hanna. Snuiter Mark.
+
+Claude zet het in `data/updates.json`, controleert het en zet het live.
+- **Minuten en stand:** die komen later, als je de Excel uploadt vanaf de Mac.
+- **Excel wint:** staat de wedstrijd eenmaal in de Excel, dan neemt die het over.
+
 ## Zo vul je de Excel in
 
 | Tabblad | Wat erin staat |

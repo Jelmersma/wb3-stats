@@ -108,7 +108,9 @@
     return `<div class="meta">
       <span class="tag tag-${m.soort}">${te("soort." + m.soort)}</span>
       <span>${esc(dDay(m.date))}${m.time ? " · " + esc(m.time) : ""}</span>
-      <span>${te(m.home ? "match.home" : "match.away")}</span>${extra}
+      <span>${te(m.home ? "match.home" : "match.away")}</span>${
+        m.viaChat ? `<span class="chip chip-sm">${te("match.viaChat")}</span>` : ""
+      }${extra}
     </div>`;
   }
 
@@ -229,7 +231,13 @@
     return `<article class="card card-flush stand-card">
       <header class="card-head pad"><div>
         <h2 class="h-card">${te("stand.title", { competitie: ST.competitie })}</h2>
-        ${usRow ? `<span class="sub">${te("stand.sub", { pos: usRow.pos, seed: `${usRow.pos}:${usRow.played}` })}</span>` : ""}
+        ${
+          ST.stale
+            ? `<span class="sub">${te("stand.stale", { date: fmt(ST.opgehaald, { day: "numeric", month: "long" }) })}</span>`
+            : usRow
+              ? `<span class="sub">${te("stand.sub", { pos: usRow.pos, seed: `${usRow.pos}:${usRow.played}` })}</span>`
+              : ""
+        }
       </div></header>
       <div class="table-scroll"><table class="stand">
         <thead><tr>
@@ -314,7 +322,7 @@
         <div class="hero-fig"><span class="hero-num">${tc.points}</span><span class="hero-lbl">${te("home.points")}</span></div>
         <dl class="hero-stats">
           ${
-            usRow
+            usRow && !ST.stale
               ? `<div><dt>${te("home.place")}</dt><dd>${te("home.placeValue", { pos: usRow.pos })}</dd></div>`
               : `<div><dt>${te("home.played")}</dt><dd>${tc.played}</dd></div>`
           }

@@ -33,6 +33,7 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_XLSX = ROOT / "data" / "WB3 Stats.xlsx"
 OUT_JS = ROOT / "site" / "assets" / "data.js"
 STAND_JSON = ROOT / "data" / "stand.json"
+UPDATES_JSON = ROOT / "data" / "updates.json"  # snelle updates via de telefoon
 OUR_TEAM = "Woudenberg 3"  # zo heten wij in de competitiestand
 SITE = ROOT / "site"
 
@@ -397,6 +398,52 @@ def read_matches(ws, roster: Roster, season: Season):
     return matches
 
 
+# ---------------------------------------------------------------- telefoon-updates
+
+def apply_updates(matches, roster):
+    """Snelle updates via de telefoon (data/updates.json).
+
+    Vult uitslag, Stats-tekst en bijzonderheden aan voor wedstrijden die in de Excel
+    nog geen uitslag hebben. Heeft de Excel de uitslag wel, dan wint de Excel.
+    """
+    if not UPDATES_JSON.exists():
+        return
+    items = json.loads(UPDATES_JSON.read_text(encoding="utf-8") or "[]")
+    for u in items:
+        date = str(u.get("datum", "")).strip()
+        where = f"Telefoon-update {date} {u.get('tegenstander', '')}".strip()
+        cands = [m for m in matches if m["date"] == date]
+        if u.get("tegenstander"):
+            k = team_key(u["tegenstander"])
+            cands = [m for m in cands if team_key(m["opponent"]) == k] or cands
+        if not cands:
+            warn(f"{where}: geen wedstrijd op die datum in tabblad Wedstrijden.")
+            continue
+        m = cands[0]
+        score = parse_score(u.get("uitslag"), m["home"], where)
+        if m["played"]:
+            if score and (score["ours"], score["theirs"]) == (m["ours"], m["theirs"]):
+                notes.append(f"{where}: staat nu ook in de Excel. Mag uit data/updates.json.")
+            else:
+                warn(f"{where}: wijkt af van de Excel ({m['ours']}-{m['theirs']}). De Excel wint.")
+            continue
+        if not score:
+            warn(f"{where}: geen geldige uitslag (verwacht bv. '3-1 (W)').")
+            continue
+        events = parse_stats_text(u.get("stats"), roster, where)
+        m.update(score)
+        m["played"] = True
+        m["viaChat"] = True
+        for stat in STAT_KEYS:
+            m[stat] = events[stat]
+        if u.get("bijzonderheden"):
+            m["notes"] = str(u["bijzonderheden"]).strip()
+        scored = sum(e["n"] for e in events["goals"])
+        if events["goals"] and scored != score["ours"]:
+            warn(f"{where}: {scored} doelpunten in Stats, maar uitslag zegt {score['ours']} voor ons.")
+        notes.append(f"{where}: verwerkt via de telefoon (nog niet in de Excel).")
+
+
 # ---------------------------------------------------------------- competitiestand
 
 def team_key(name) -> str:
@@ -417,14 +464,16 @@ def read_stand(matches, ours):
     keys = {r["key"] for r in rows}
 
     us = next((r for r in rows if r["us"]), None)
+    stale = False
     if not us:
         warn(f"Stand: '{OUR_TEAM}' niet gevonden in data/stand.json.")
     else:
         mine = {"played": ours["played"], "w": ours["w"], "d": ours["g"], "l": ours["v"],
                 "gf": ours["gf"], "ga": ours["ga"], "pts": ours["points"]}
         if us["played"] < mine["played"]:
-            warn(f"Stand is verouderd: daarin {us['played']} gespeeld, in de Excel {mine['played']}. "
-                 "Haal de stand opnieuw op (zie CLAUDE.md).")
+            stale = True
+            notes.append(f"Stand loopt achter: daarin {us['played']} gespeeld, in de data {mine['played']}. "
+                         "De site meldt dat bij de stand. Ververs hem bij een update vanaf de Mac (zie CLAUDE.md).")
         elif us["played"] > mine["played"]:
             warn(f"Stand is verder dan de Excel: daarin {us['played']} gespeeld, in de Excel {mine['played']}. "
                  "Mist er een wedstrijd in de Excel?")
@@ -438,7 +487,7 @@ def read_stand(matches, ours):
         if m["soort"] == "comp" and rows and m["oppKey"] not in keys:
             warn(f"Tegenstander '{m['opponent']}' niet gevonden in de stand (andere schrijfwijze?).")
     return {"competitie": st.get("competitie"), "bron": st.get("bron"),
-            "opgehaald": st.get("opgehaald"), "rows": rows}
+            "opgehaald": st.get("opgehaald"), "stale": stale, "rows": rows}
 
 
 # ---------------------------------------------------------------- main
@@ -472,6 +521,7 @@ def main():
     comp_cols, comp_rows = read_grid(ws_comp, roster, season, "Competitie")
     oefen_cols, oefen_rows = read_grid(ws_oefen, roster, season, "Oefen")
     matches = read_matches(ws_match, roster, season)
+    apply_updates(matches, roster)
 
     # Ontbrekende spelers per tabblad
     grids = {"Selectie": totals, "Training": train_rows, "Competitie": comp_rows, "Oefen": oefen_rows}
@@ -499,6 +549,8 @@ def main():
                     lineup.append({"id": roster.players[key]["id"], "min": int(v)})
             lineup.sort(key=lambda x: (-x["min"], x["id"]))
             m["lineup"] = lineup
+        elif m.get("viaChat"):
+            notes.append(f"Wedstrijd {m['date']} {m['opponent']}: nog geen minuten (komen met de Excel).")
         elif m["played"]:
             tab = "Competitie" if m["soort"] == "comp" else "Oefen"
             warn(f"Wedstrijd {m['date']} {m['opponent']}: geen minuten gevonden in tabblad {tab} voor deze datum.")
@@ -517,7 +569,12 @@ def main():
         for soort in ("comp", "oefen"):
             ms = [m for m in played if m["soort"] == soort]
             mins = [x["min"] for m in ms for x in m["lineup"] if x["id"] == p["id"]]
-            t = totals.get(key, {}).get(soort, dict.fromkeys(STAT_KEYS, 0))
+            t = dict(totals.get(key, {}).get(soort, dict.fromkeys(STAT_KEYS, 0)))
+            # Telefoon-updates staan nog niet in Selectie: tel die erbij
+            for m in ms:
+                if m.get("viaChat"):
+                    for stat in STAT_KEYS:
+                        t[stat] += sum(e["n"] for e in m[stat] if e["id"] == p["id"])
             out[soort] = {"apps": len(mins), "min": sum(mins), **t}
         # Training
         rows = train_rows.get(key)
@@ -536,7 +593,7 @@ def main():
     # Controle: handmatige totalen (Selectie) vs Stats-tekst (Wedstrijden)
     labels = {"goals": "goals", "assists": "assists", "snuiter": "snuiters", "geel": "gele kaarten", "rood": "rode kaarten"}
     for soort, soort_label in (("comp", "competitie"), ("oefen", "oefen")):
-        ms = [m for m in played if m["soort"] == soort]
+        ms = [m for m in played if m["soort"] == soort and not m.get("viaChat")]
         for stat in STAT_KEYS:
             text_has_any = any(m[stat] for m in ms)
             if stat in ("geel", "rood") and not text_has_any:
@@ -547,7 +604,7 @@ def main():
                     if e["id"]:
                         from_text[e["id"]] = from_text.get(e["id"], 0) + e["n"]
             for po in players_out:
-                a = po[soort][stat]
+                a = totals.get(id_to_key[po["id"]], {}).get(soort, {}).get(stat, 0)
                 b = from_text.get(po["id"], 0)
                 if a != b:
                     warn(f"{po['name']}: {a} {labels[stat]} ({soort_label}) in Selectie, maar {b} volgens de wedstrijdverslagen.")
