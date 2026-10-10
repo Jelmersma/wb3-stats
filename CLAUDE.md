@@ -35,7 +35,7 @@ Felix uploadt in de chat een nieuwe versie van de Excel en vraagt om een update.
 
 ### Update via de telefoon (cloud-sessie in de Claude-app)
 
-Felix typt op zijn telefoon zoiets als: *"WB3 – Merino's 3-1 gewonnen. Goals Tom 2x, Mark. Assists Sander, Hanna. Snuiter Mark."*
+Felix typt op zijn telefoon zoiets als: *"WB3 – Merino's 3-1 gewonnen. Goals Tom 2x, Mark. Assists Sander, Hanna. Snuiter Mark. Minuten: Tom 90, Mark 60, …"*
 Er is dan geen Excel. Je werkt in een cloud-sessie: geen browser, wel git en Python. `openpyxl` wordt geïnstalleerd door de SessionStart-hook in `.claude/settings.json`.
 
 1. **Wedstrijd zoeken:** zoek de datum en tegenstander op in tabblad Wedstrijden van `data/WB3 Stats.xlsx`. Dat is de eerstvolgende wedstrijd zonder uitslag, tenzij Felix iets anders zegt.
@@ -43,21 +43,23 @@ Er is dan geen Excel. Je werkt in een cloud-sessie: geen browser, wel git en Pyt
    ```json
    {"datum": "2026-10-10", "tegenstander": "De Merino's 2", "uitslag": "3-1 (W)",
     "stats": "Doelpunten: Tom 2x, Mark\nAssists: Sander, Hanna\nSnuiter: Mark",
-    "bijzonderheden": "optioneel"}
+    "bijzonderheden": "optioneel",
+    "minuten": {"Tom": 90, "Mark": 60, "Niels v. B.": 90}}
    ```
    - De uitslag altijd met `(W/G/V)`.
    - Namen zoals in de selectie. Is een naam onduidelijk, vraag het.
+   - `minuten` is optioneel: alleen spelers die gespeeld hebben, hele getallen van 1 t/m 90. Stuurt Felix geen minuten, laat het veld dan weg.
 3. **Bouwen:** draai `python3 build.py`.
-   - De opmerkingen over ontbrekende minuten en een achterlopende stand zijn bij een telefoon-update normaal.
+   - De opmerkingen over ontbrekende minuten (als Felix ze niet meestuurde) en een achterlopende stand zijn bij een telefoon-update normaal.
+   - Met minuten controleert het script dat ze optellen tot 990 (11 x 90) en dat iedereen bij Doelpunten/Assists/Snuiter minuten heeft. Wijkt het af, vraag het Felix (vergeten speler, of met 10 gespeeld?).
    - **CONTROLEREN**-meldingen leg je aan Felix voor, net als bij een Excel-update.
 4. **Pushen:** commit en push **direct naar `main`**: `git push origin HEAD:main`. Lukt dat niet, maak dan een PR en zeg Felix dat hij die in de GitHub-app moet mergen.
 5. **Melden:** meld Felix kort wat er live staat.
 
 Wat in een cloud-sessie **niet** kan:
 - de competitiestand bijwerken (stap 1b, er is geen browser). Dat gebeurt bij de volgende update vanaf de Mac. De site meldt zolang dat de stand achterloopt.
-- minuten per speler. Die komen pas mee met de Excel.
 
-**Excel wint.** Zodra de Excel de uitslag van een wedstrijd heeft, negeert `build.py` de telefoon-update daarvan.
+**Excel wint.** Zodra de Excel de uitslag van een wedstrijd heeft, negeert `build.py` de telefoon-update daarvan (ook de minuten). Staan de minuten van die datum al in tabblad Competitie/Oefen, dan winnen die ook.
 - Komt de uitslag overeen, dan staat er een opmerking "mag uit data/updates.json". Haal die regel dan weg.
 - Wijkt de uitslag af, dan meldt het script een **CONTROLEREN**. Leg die aan Felix voor.
 

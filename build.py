@@ -441,7 +441,43 @@ def apply_updates(matches, roster):
         scored = sum(e["n"] for e in events["goals"])
         if events["goals"] and scored != score["ours"]:
             warn(f"{where}: {scored} doelpunten in Stats, maar uitslag zegt {score['ours']} voor ons.")
+        if u.get("minuten"):
+            m["lineup"] = read_update_minutes(u["minuten"], m, roster, where)
         notes.append(f"{where}: verwerkt via de telefoon (nog niet in de Excel).")
+
+
+def read_update_minutes(raw, m, roster, where):
+    """Minuten uit een telefoon-update: {"Tom": 90, "Bert": 45}. Tabblad Competitie/Oefen wint."""
+    if not isinstance(raw, dict):
+        warn(f"{where}: 'minuten' moet een lijstje naam -> minuten zijn, bv. {{\"Tom\": 90}}.")
+        return []
+    lineup, seen = [], set()
+    for name, v in raw.items():
+        mins = num(v)
+        if mins is None or mins <= 0 or mins > 90 or mins != int(mins):
+            warn(f"{where}: minuten voor '{name}' ({v}) kloppen niet (verwacht een heel getal van 1 t/m 90).")
+            continue
+        p, how = roster.resolve(name)
+        if not p:
+            extra = " (meerdere spelers met die voornaam)" if how == "dubbel" else " (leenspeler? telt niet mee in spelersstats)"
+            warn(f"{where}: '{name}' bij minuten niet gevonden in de selectie{extra}.")
+            continue
+        if how == "voornaam":
+            notes.append(f"{where}: '{name}' gekoppeld aan {p['name']}.")
+        if p["id"] in seen:
+            warn(f"{where}: {p['name']} staat dubbel bij minuten.")
+            continue
+        seen.add(p["id"])
+        lineup.append({"id": p["id"], "min": int(mins)})
+    lineup.sort(key=lambda x: (-x["min"], x["id"]))
+    total = sum(x["min"] for x in lineup)
+    if lineup and total != 990:
+        warn(f"{where}: minuten tellen op tot {total}, verwacht 990 (11 x 90). Speler vergeten, of met 10 gespeeld?")
+    for stat in ("goals", "assists", "snuiter"):
+        for e in m[stat]:
+            if e["id"] and e["id"] not in seen:
+                warn(f"{where}: {e['name']} staat bij {stat} maar heeft geen minuten.")
+    return lineup
 
 
 # ---------------------------------------------------------------- competitiestand
@@ -550,7 +586,8 @@ def main():
             lineup.sort(key=lambda x: (-x["min"], x["id"]))
             m["lineup"] = lineup
         elif m.get("viaChat"):
-            notes.append(f"Wedstrijd {m['date']} {m['opponent']}: nog geen minuten (komen met de Excel).")
+            if not m["lineup"]:
+                notes.append(f"Wedstrijd {m['date']} {m['opponent']}: nog geen minuten (komen met de Excel).")
         elif m["played"]:
             tab = "Competitie" if m["soort"] == "comp" else "Oefen"
             warn(f"Wedstrijd {m['date']} {m['opponent']}: geen minuten gevonden in tabblad {tab} voor deze datum.")

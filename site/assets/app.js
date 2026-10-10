@@ -109,7 +109,7 @@
       <span class="tag tag-${m.soort}">${te("soort." + m.soort)}</span>
       <span>${esc(dDay(m.date))}${m.time ? " · " + esc(m.time) : ""}</span>
       <span>${te(m.home ? "match.home" : "match.away")}</span>${
-        m.viaChat ? `<span class="chip chip-sm">${te("match.viaChat")}</span>` : ""
+        m.viaChat ? `<span class="chip chip-sm">${te(m.lineup.length ? "match.viaChatWithMin" : "match.viaChat")}</span>` : ""
       }${extra}
     </div>`;
   }

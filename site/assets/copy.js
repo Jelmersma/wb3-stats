@@ -119,6 +119,7 @@ window.WB3_COPY = {
     inDays: ({ n }) => `Over ${n} dagen`,
     pending: "Uitslag volgt",
     viaChat: "Vers van de telefoon · minuten volgen",
+    viaChatWithMin: "Vers van de telefoon",
     next: "Volgende",
     against: ({ score, opp }) => `${score} tegen ${opp}`,
     // Onder de volgende wedstrijd: waar staat de tegenstander?
