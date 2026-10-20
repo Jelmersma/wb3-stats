@@ -69,7 +69,9 @@ def norm(name) -> str:
 
 
 def squash(name) -> str:
-    return re.sub(r"[^a-z0-9]", "", norm(name))
+    # "Niels van B." en "Niels v. B." worden hetzelfde
+    n = re.sub(r"\bvan\b", "v", norm(name))
+    return re.sub(r"[^a-z0-9]", "", n)
 
 
 def slug(name: str) -> str:
@@ -303,8 +305,14 @@ def parse_stats_text(text, roster: Roster, where: str):
         if not line:
             continue
         if ":" not in line:
-            warn(f"{where}: regel '{line}' in Stats niet herkend (verwacht 'Doelpunten: ...').")
-            continue
+            # Vergeten dubbele punt? "Snuiter Jur" -> "Snuiter: Jur"
+            low = norm(line)
+            lead = next((k for k in sorted(TEXT_KEYS, key=len, reverse=True) if low.startswith(k + " ")), None)
+            if not lead:
+                warn(f"{where}: regel '{line}' in Stats niet herkend (verwacht 'Doelpunten: ...').")
+                continue
+            notes.append(f"{where}: regel '{line}' gelezen als '{line[:len(lead)]}: {line[len(lead):].strip()}'.")
+            line = f"{line[:len(lead)]}:{line[len(lead):]}"
         k, v = line.split(":", 1)
         key = TEXT_KEYS.get(norm(k))
         if not key:
