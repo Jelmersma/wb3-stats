@@ -144,7 +144,7 @@
     const rows = m.lineup
       .map((x) => {
         const p = P[x.id];
-        return `<li><a href="${playerUrl(x.id)}">${esc(p ? p.name : x.id)}</a>
+        return `<li><a href="${playerUrl(x.id)}">${esc(x.name || (p ? p.name : x.id))}</a>
           <span class="meter" aria-hidden="true"><i style="width:${((x.min / max) * 100).toFixed(1)}%"></i></span>
           <span class="num">${x.min}'</span></li>`;
       })

@@ -90,7 +90,7 @@ Wat in een cloud-sessie **niet** kan:
 - Jaartallen: het seizoen loopt van juli t/m juni. Datums die in het verkeerde jaar staan, worden automatisch gecorrigeerd.
 - Namen in de Stats-tekst die niet in de selectie staan (leenspelers), tellen mee voor de wedstrijd maar niet in de spelersstats. Daarover verschijnt een melding.
 - Bijnamen/alternatieve namen in de Stats-tekst staan in `ALIASES` bovenin `build.py` (bv. "Robin H." = Hanna). Bevestigt Felix dat een onbekende naam een bestaande speler is, voeg hem daar toe.
-- Eenmalige bijnaam bij één wedstrijd: zet hem tussen aanhalingstekens achter de naam, bv. `Assists: Joost ‘Dennis’`. Op de wedstrijdkaart staat dan ‘Dennis’ (met link naar Joost), de actie telt gewoon voor Joost.
+- Eenmalige bijnaam bij één wedstrijd: zet hem tussen aanhalingstekens achter de naam, bv. `Assists: Joost ‘Dennis’`. Op de wedstrijdkaart staat dan ‘Dennis’ (met link naar Joost), ook bij "Wie stonden er" van die wedstrijd. De actie telt gewoon voor Joost.
 - Krijg je aanvullingen in de chat (bv. een vergeten Assists-regel)? Werk dan `data/WB3 Stats.xlsx` bij met openpyxl (laden zónder `data_only`, zodat formules blijven) en vraag Felix het ook in zijn eigen Excel te zetten. Anders verdwijnt het bij de volgende upload weer.
 
 ## Tekst en tone of voice

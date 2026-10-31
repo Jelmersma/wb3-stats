@@ -614,6 +614,15 @@ def main():
             tab = "Competitie" if soort == "comp" else "Oefen"
             warn(f"Tabblad {tab} heeft minuten op {date}, maar er staat geen {tab.lower()}wedstrijd op die datum in Wedstrijden.")
 
+    # Bijnaam uit de Stats-tekst ook in de opstelling van diezelfde wedstrijd
+    id_to_name = {p["id"]: p["name"] for p in roster.players.values()}
+    for m in matches:
+        nicks = {e["id"]: e["name"] for stat in STAT_KEYS for e in m.get(stat, [])
+                 if e["id"] and e["name"] != id_to_name[e["id"]]}
+        for x in m["lineup"]:
+            if x["id"] in nicks:
+                x["name"] = nicks[x["id"]]
+
     # Spelersstats
     played = [m for m in matches if m["played"]]
     id_to_key = {p["id"]: k for k, p in roster.players.items()}
