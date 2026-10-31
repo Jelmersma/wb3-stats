@@ -284,6 +284,9 @@ def parse_score(raw, home: bool, where: str):
 ITEM_SPLIT = re.compile(r"\s*(?:,|;|&|\ben\b)\s*")
 
 
+NICK_RE = re.compile(r"^(.+?)\s*[\"'‘’“”]([^\"'‘’“”]+)[\"'‘’“”]$")
+
+
 def parse_item(item: str):
     item = item.strip().strip(".").strip() if item.strip().lower() not in OWN_GOAL else item.strip()
     for pat in (r"^(.*?)\s*\(?\s*(\d+)\s*x\s*\)?$", r"^(.*?)\s*\(?\s*x\s*(\d+)\s*\)?$"):
@@ -325,6 +328,10 @@ def parse_stats_text(text, roster: Roster, where: str):
                 events[key].append({"id": None, "name": "Eigen goal", "n": 1, "og": True})
                 continue
             name, n = parse_item(raw)
+            # Bijnaam bij de wedstrijd: "Joost 'Dennis'" telt voor Joost, toont 'Dennis'
+            nick = NICK_RE.match(name)
+            if nick:
+                name = nick.group(1).strip()
             p, how = roster.resolve(name)
             if p:
                 if how == "voornaam":
@@ -334,6 +341,9 @@ def parse_stats_text(text, roster: Roster, where: str):
                 extra = " (meerdere spelers met die voornaam)" if how == "dubbel" else " (leenspeler? telt niet mee in spelersstats)"
                 warn(f"{where}: '{name}' bij {k.strip()} niet gevonden in de selectie{extra}.")
                 events[key].append({"id": None, "name": name, "n": n})
+            if nick:
+                events[key][-1]["name"] = f"‘{nick.group(2).strip()}’"
+                notes.append(f"{where}: {name} bij {k.strip()} getoond als ‘{nick.group(2).strip()}’.")
     return events
 
 
