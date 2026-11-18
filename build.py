@@ -52,6 +52,7 @@ ALIASES = {
     "robin h.": "Hanna",
     "robin h": "Hanna",
     "robin hanna": "Hanna",
+    "stok": "Steven",
 }
 
 warnings: list[str] = []
