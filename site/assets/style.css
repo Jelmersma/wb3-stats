@@ -1010,6 +1010,20 @@ table.stand {
   font-size: 14px;
   color: var(--muted);
 }
+.more a {
+  color: var(--link);
+  font-weight: 600;
+}
+.board-full {
+  max-width: 640px;
+}
+.board-links {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0 0;
+}
 .cards {
   display: inline-flex;
   gap: 8px;

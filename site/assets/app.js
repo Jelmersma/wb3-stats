@@ -172,8 +172,34 @@
     return { rows: all.slice(0, limit), more: Math.max(0, all.length - limit) };
   }
 
-  function board({ title, sub, data, value, scale = (r) => r.v }) {
+  // Klassementen: top 5 op het overzicht, de hele stand via spelers.html?klassement=<key>
+  const cardTotal = (p) => p.comp.geel + p.oefen.geel + 2 * (p.comp.rood + p.oefen.rood);
+  const BOARDS = [
+    { key: "goals", get: (p) => p.comp.goals, tie: (p) => p.comp.assists, value: (r) => r.v },
+    { key: "assists", get: (p) => p.comp.assists, tie: (p) => p.comp.goals, value: (r) => r.v },
+    { key: "snuiter", get: (p) => p.comp.snuiter, value: (r) => r.v },
+    { key: "minutes", get: (p) => p.comp.min, value: (r) => `${r.v}'` },
+    {
+      key: "training",
+      get: (p) => (p.train.held ? p.train.att / p.train.held : 0),
+      tie: (p) => p.train.att,
+      value: (r) => `${r.p.train.att}/${r.p.train.held}`,
+    },
+    {
+      key: "cards",
+      get: cardTotal,
+      value: (r) => {
+        const g = r.p.comp.geel + r.p.oefen.geel;
+        const rd = r.p.comp.rood + r.p.oefen.rood;
+        return `<span class="cards">${g ? `<span class="cardv">${ICONS.geel}${g}</span>` : ""}${rd ? `<span class="cardv">${ICONS.rood}${rd}</span>` : ""}</span>`;
+      },
+    },
+  ];
+  const boardUrl = (key) => `spelers.html?klassement=${encodeURIComponent(key)}`;
+
+  function board({ title, sub, data, value, href, scale = (r) => r.v }) {
     const { rows, more } = data;
+    const full = href ? `<a href="${href}">${te("boards.full")} →</a>` : "";
     const max = Math.max(1e-9, ...rows.map(scale));
     const body = rows.length
       ? `<ol class="board-list">${rows
@@ -185,7 +211,7 @@
               <span class="val">${value(r)}</span>
             </li>`
           )
-          .join("")}</ol>${more ? `<p class="more">${te("boards.more", { n: more })}</p>` : ""}`
+          .join("")}</ol>${more || full ? `<p class="more">${[more ? te("boards.more", { n: more }) : "", full].filter(Boolean).join(" · ")}</p>` : ""}`
       : `<p class="empty">${te("boards.empty", { seed: title })}</p>`;
     return `<article class="card board">
       <header><h3>${esc(title)}</h3>${sub ? `<span class="sub">${esc(sub)}</span>` : ""}</header>
@@ -370,29 +396,9 @@
         </article>`
       : `<article class="card match-card"><header class="card-head"><h2 class="h-card">${te("home.next")}</h2></header><p class="empty">${te("home.noNext")}</p></article>`;
 
-    const ps = D.players;
-    const boards = [
-      board({ title: t("boards.goals"), sub: t("boards.goalsSub"), data: ranked(ps, (p) => p.comp.goals, { tie: (p) => p.comp.assists }), value: (r) => r.v }),
-      board({ title: t("boards.assists"), sub: t("boards.assistsSub"), data: ranked(ps, (p) => p.comp.assists, { tie: (p) => p.comp.goals }), value: (r) => r.v }),
-      board({ title: t("boards.snuiter"), sub: t("boards.snuiterSub"), data: ranked(ps, (p) => p.comp.snuiter), value: (r) => r.v }),
-      board({ title: t("boards.minutes"), sub: t("boards.minutesSub"), data: ranked(ps, (p) => p.comp.min), value: (r) => `${r.v}'` }),
-      board({
-        title: t("boards.training"),
-        sub: t("boards.trainingSub"),
-        data: ranked(ps, (p) => (p.train.held ? p.train.att / p.train.held : 0), { tie: (p) => p.train.att }),
-        value: (r) => `${r.p.train.att}/${r.p.train.held}`,
-      }),
-      board({
-        title: t("boards.cards"),
-        sub: t("boards.cardsSub"),
-        data: ranked(ps, (p) => p.comp.geel + p.oefen.geel + 2 * (p.comp.rood + p.oefen.rood)),
-        value: (r) => {
-          const g = r.p.comp.geel + r.p.oefen.geel;
-          const rd = r.p.comp.rood + r.p.oefen.rood;
-          return `<span class="cards">${g ? `<span class="cardv">${ICONS.geel}${g}</span>` : ""}${rd ? `<span class="cardv">${ICONS.rood}${rd}</span>` : ""}</span>`;
-        },
-      }),
-    ].join("");
+    const boards = BOARDS.map((b) =>
+      board({ ...b, title: t(`boards.${b.key}`), sub: t(`boards.${b.key}Sub`), data: ranked(D.players, b.get, { tie: b.tie }), href: boardUrl(b.key) })
+    ).join("");
 
     root.innerHTML = `${hero}
       <section class="section"><div class="wrap grid-2">${lastCard}${nextCard}</div></section>
@@ -409,6 +415,9 @@
   // ---------------------------------------------------------------- spelers
 
   function pagePlayers() {
+    const key = new URLSearchParams(location.search).get("klassement");
+    const b = BOARDS.find((x) => x.key === key);
+    if (b) return pageBoard(b);
     setTitle(t("players.title"));
     const COLS = [
       { key: "name", label: t("stats.player"), text: true },
@@ -492,6 +501,17 @@
       draw();
     });
     draw();
+  }
+
+  function pageBoard(b) {
+    const title = t(`boards.${b.key}`);
+    setTitle(title);
+    root.innerHTML = `${band({ eyebrow: te("site.season", { season: D.season }), title: esc(title), sub: te(`boards.${b.key}Sub`) })}
+      <section class="section"><div class="wrap board-full">
+        ${board({ ...b, title, sub: t("boards.fullSub"), data: ranked(D.players, b.get, { tie: b.tie, limit: Infinity }) })}
+        <p class="board-links"><a class="link-more" href="index.html">← ${te("boards.back")}</a>
+        <a class="link-more" href="spelers.html">${te("home.allPlayers")} →</a></p>
+      </div></section>`;
   }
 
   // ---------------------------------------------------------------- speler

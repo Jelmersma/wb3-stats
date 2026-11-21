@@ -13,6 +13,7 @@ Geen framework en geen npm. Het enige wat nodig is: Python 3 met `openpyxl`.
 - `build.py`: leest de Excel, controleert hem en schrijft `site/assets/data.js`. Zet ook cache-busters (`?v=`) in de HTML.
 - `site/`: precies wat online komt, via GitHub Pages (`.github/workflows/deploy.yml`, bij elke push naar `main`).
   - `index.html`, `spelers.html`, `speler.html?id=…`, `wedstrijden.html`, `training.html`: lege schillen met `data-page`.
+  - `spelers.html?klassement=<key>` (goals, assists, snuiter, minutes, training, cards): de hele stand van een klassement. De top 5 op het overzicht linkt ernaartoe.
   - `assets/app.js`: rendert alle pagina's uit `WB3_DATA` + `WB3_COPY`.
   - `assets/copy.js`: **alle** teksten. De tone of voice zit hier, nergens anders.
   - `assets/style.css`: opmaak, design tokens bovenaan (licht + donker).

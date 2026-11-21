@@ -1,7 +1,7 @@
 {
  "competitie": "2e klasse H",
  "bron": "https://www.vvwoudenberg.nl/424/14594/competitie/",
- "opgehaald": "2026-11-07",
+ "opgehaald": "2026-11-21",
  "rows": [
   {
    "pos": 1,
@@ -77,26 +77,26 @@
   },
   {
    "pos": 7,
-   "team": "Renswoude 2",
-   "played": 6,
-   "w": 2,
+   "team": "GVVV 2",
+   "played": 7,
+   "w": 3,
    "d": 2,
    "l": 2,
-   "pts": 8,
-   "gf": 7,
-   "ga": 6,
+   "pts": 11,
+   "gf": 13,
+   "ga": 14,
    "pm": 0
   },
   {
    "pos": 8,
-   "team": "GVVV 2",
-   "played": 6,
+   "team": "Renswoude 2",
+   "played": 7,
    "w": 2,
    "d": 2,
-   "l": 2,
+   "l": 3,
    "pts": 8,
-   "gf": 10,
-   "ga": 12,
+   "gf": 9,
+   "ga": 9,
    "pm": 0
   },
   {

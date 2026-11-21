@@ -84,6 +84,9 @@ window.WB3_COPY = {
     cardsSub: "Strijd. Inzet. Beetje zeiken. Soms een gele.",
     empty: ["Nog niemand. Kans!", "Leeg. Wie durft?", "Nog niks. Wie opent het klassement?"],
     more: ({ n }) => (n === 1 ? "en nog 1 strijder" : `en nog ${n} strijders`),
+    full: "Hele stand",
+    fullSub: "Iedereen op een rij. Niet erbij? Volgende keer beter.",
+    back: "Alle klassementen",
   },
 
   stats: {
