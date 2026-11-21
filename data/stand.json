@@ -53,6 +53,18 @@
   },
   {
    "pos": 5,
+   "team": "Valleivogels 3",
+   "played": 8,
+   "w": 5,
+   "d": 0,
+   "l": 3,
+   "pts": 15,
+   "gf": 15,
+   "ga": 14,
+   "pm": 0
+  },
+  {
+   "pos": 6,
    "team": "SVL 2",
    "played": 8,
    "w": 4,
@@ -61,18 +73,6 @@
    "pts": 14,
    "gf": 18,
    "ga": 7,
-   "pm": 0
-  },
-  {
-   "pos": 6,
-   "team": "Valleivogels 3",
-   "played": 7,
-   "w": 4,
-   "d": 0,
-   "l": 3,
-   "pts": 12,
-   "gf": 14,
-   "ga": 14,
    "pm": 0
   },
   {
@@ -114,13 +114,13 @@
   {
    "pos": 10,
    "team": "Hooglanderveen 2",
-   "played": 7,
+   "played": 8,
    "w": 1,
    "d": 2,
-   "l": 4,
+   "l": 5,
    "pts": 5,
    "gf": 9,
-   "ga": 16,
+   "ga": 17,
    "pm": 0
   },
   {
